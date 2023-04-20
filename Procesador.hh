@@ -41,6 +41,8 @@ public:
     Procesador(string s, int m);
     //Modificadoras
 
+    void avanzar_tiempo(int t);
+    
     /** @brief Añade un proceso al procesador 
      
         \pre El p.i. (P) está inicializado, la memoria de p es menor o igual a la memoria actual de P

@@ -7,6 +7,7 @@
 
 #include "Proceso.hh"
 #ifndef NO_DIAGRAM
+#include <queue>
 #include <map>
 #endif 
 
@@ -18,6 +19,7 @@ class Prioridad {
 
 private:
     string id_prior;
+    queue <int> antique;
     int proc_env;
     int proc_rechazados;
     map <int, Proceso> mjob; //Vector de procesos pendientes (puede estar vacio)
@@ -65,7 +67,7 @@ public:
        \pre El parámetro implícito está inicializado
        \post El resultado indica si el proceso con ID = id existe en el p.i.
   */
-    bool existe_job(int id);
+    bool existe_job(int id) const;
 
     /** @brief Consulta si esta prioridad tiene procesos pendientes
      

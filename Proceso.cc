@@ -4,12 +4,24 @@ Proceso::Proceso() {
 
 }
 
+void Proceso::restar_tiempo(int t) {
+    t_ejec -= t;
+}
+
+void Proceso::add_indice (int ind) {
+    ind_mem.first = ind;
+}
+
 int Proceso::consultar_ID() const{
     return id;
 }
 
 int Proceso::consultar_MEM() const {
     return ind_mem.second;
+}
+
+int Proceso::consultar_ind() const {
+    return ind_mem.first;
 }
 
 int Proceso::consultar_tiempo() const {
@@ -21,5 +33,5 @@ void Proceso::leer() {
 }
 
 void Proceso::escribir() const {
-
+    cout << id << ' ' << ind_mem.second << ' ' << t_ejec << endl;
 }

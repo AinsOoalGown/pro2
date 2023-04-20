@@ -47,12 +47,14 @@ public:
 
     void add_job_prc(string id, Proceso p);
 
+    void eliminar_job_prc(string idprc, int idjob);
+
     /** @brief Avanza el tiempo total
      
       \pre <em>cierto</em>
       \post El resultado es el tiempo original más t y la eliminación de los procesos con tiempo <= t
     */
-    void avanzar_tiempo(int t);
+    void avanzar_tiempo_prc(int t);
  
     /** @brief Añade un clúster al clúster original
      

@@ -121,13 +121,5 @@ public:
     */
     void escribir_prior(string id_prior) const; //escribe todos los procesos pendeintes con esta id_prior
 
-    /** @brief Operación de escritura de los intentos de envio del área de espera al cluster
-
-       \pre Existe la prioridad con ID DE PRIORIDAD = id_prior en el p.i.
-       \post Se ha escrito el número de procesos enviados (aceptados) al clúster desde el área de
-        espera y el número de rechazos (el total de todos los procesos) parámetro implícito en el canal standard de salida. 
-    */
-    void escribir_intentos(string id_prior) const; //escribe num proc con id_prior ENVIADOS al cluster + num de rechazos
-
 };
 #endif

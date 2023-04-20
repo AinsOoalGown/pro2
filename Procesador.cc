@@ -47,20 +47,36 @@ void Procesador::add_job(Proceso p) {
             if (ind == -1) ++memo;
             else found = true;
         }
-        cout << "he salido" << endl;
     }
     mem += p.consultar_MEM();
     pair <int, int> par (p.consultar_MEM(), p.consultar_ID());
     mmem.insert(make_pair(ind, par));
-    mjob.insert(make_pair(p.consultar_ID(),p));
+    p.add_indice(ind);
+    mjob.insert(make_pair(p.consultar_ID(), p));
 }
 
 void Procesador::eliminar_job(int id) {
-
+    mem -= mjob[id].consultar_MEM();
+    int ind = mjob[id].consultar_ind();
+    mjob.erase(mjob.find(id));
+    mmem.erase(mmem.find(ind));
 }
 
 void Procesador::compactar_mem() {
 
+}
+
+void Procesador::avanzar_tiempo(int t) {
+    if (not mjob.empty()) {
+        map <int, Proceso>::iterator it;
+        for (it = mjob.begin(); it != mjob.end(); ++it) {
+            if ((*it).second.consultar_tiempo() <= t) {
+                int id = (*it).second.consultar_ID();
+                eliminar_job(id);
+            }
+            else (*it).second.restar_tiempo(t);   
+        }
+    }
 }
 
 string Procesador::consultar_ID() const {
@@ -106,8 +122,7 @@ void Procesador::leer() {
 void Procesador::escribir() const {
     map <int, pair <int,int> >::const_iterator it;
     for (it = mmem.begin(); it != mmem.end(); ++it) {
-        cout << (*it).first << ' ' << (*it).second.second << ' ';
-        cout << (*it).second.first << ' ';
-        cout << mjob.at((*it).second.second).consultar_tiempo() << endl;
+        cout << (*it).first << ' ';
+        mjob.at((*it).second.second).escribir();
     }
 }

@@ -12,7 +12,9 @@ Prioridad::Prioridad(string id_pri) {
 }
 
 void Prioridad::add_job(Proceso p) {
-
+    antique.push(p.consultar_ID());
+    mjob.insert(make_pair(p.consultar_ID(),p));
+    pendiente = true;
 }
 
 Proceso Prioridad::consultar_job_mas_antiguo() const {
@@ -20,8 +22,9 @@ Proceso Prioridad::consultar_job_mas_antiguo() const {
     return p;
 }
 
-bool Prioridad::existe_job(int id) {
-    return false;
+bool Prioridad::existe_job(int id) const {
+    return (pendiente and mjob.find(id) != mjob.end());
+    
 }
 
 bool Prioridad::en_espera() const {
@@ -29,6 +32,11 @@ bool Prioridad::en_espera() const {
 }
 
 void Prioridad::escribir_job() const {
+    queue<int> c = antique;
+    while (not c.empty()) {
+        if (mjob.find(c.front()) != mjob.end()) mjob.at(c.front()).escribir();
+        c.pop();
+    }
 
 }
 

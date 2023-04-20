@@ -19,7 +19,6 @@ using namespace std;
 class Proceso {
 
 private:
-    string id_prior;
     int id;
     int t_ejec;
     pair <int, int> ind_mem; //first = indice que ocupa en el mem, second = mem que ocupa
@@ -37,6 +36,10 @@ public:
 
     //Modificadoras
 
+    void add_indice (int ind);
+
+    void restar_tiempo(int t);
+
     //Consultoras
 
     /** @brief Consultora del id del proceso
@@ -50,6 +53,8 @@ public:
         \post El resultado la memoria del parámetro implícito
     */
     int consultar_MEM() const;
+
+    int consultar_ind() const;
 
     int consultar_tiempo() const;
 

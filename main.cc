@@ -44,25 +44,31 @@ int main() {
             string id_prior;
             cin >> id_prior;
             if (not ae.existe_prior(id_prior)) ae.add_prior(id_prior);
-            else cout << "error" << endl;
+            else cout << "error: ya existe prioridad" << endl;
         }
 
         else if (comando == "bp" or comando == "baja_prioridad") {         //4
             string id_prior;
             cin >> id_prior;
-            if (ae.existe_prior(id_prior) and not ae.id_prior_pendiente(id_prior))
-            ae.eliminar_prior(id_prior);
-            else cout << "error" << endl;
+            if (ae.existe_prior(id_prior)) {
+                if (not ae.id_prior_pendiente(id_prior)) ae.eliminar_prior(id_prior);
+                else cout << "error: prioridad con procesos" << endl;
+            }
+            else cout << "error: no existe prioridad" << endl;
         }
         
-        else if (comando == "ape" or comando == "alta_proceso_espera") {        //5
-            Proceso p;
-            p.leer();
+        else if (comando == "ape" or comando == "alta_proceso_espera") {       //5
             string id_prior;
             cin >> id_prior;
-            if (ae.existe_prior(id_prior) and not ae.existe_prior_job(id_prior, p.consultar_ID()))
-            ae.add_job(p, id_prior);
-            else cout << "error" << endl;
+            Proceso p;
+            p.leer();
+            if (ae.existe_prior(id_prior)) {
+                if (not ae.existe_prior_job(id_prior, p.consultar_ID())) {
+                    ae.add_job(p, id_prior);
+                }
+                else cout << "error: ya existe proceso" << endl;
+            }
+            else cout << "error: no existe prioridad" << endl;
         }
 
         else if (comando == "app" or comando == "alta_proceso_procesador") {        //6
@@ -85,10 +91,11 @@ int main() {
             string idprc; //id procesador
             int idjob;     //id proceso
             cin >> idprc >> idjob;
-            if (c.existe_prc(idprc) and c.consultar_prc(idprc).existe_job(idjob))
-            c.consultar_prc(idprc).eliminar_job(idjob); 
-            //MAL!! NO USAR CONSULTAR PARA MODIFICAR
-            else cout << "error" << endl;
+            if (c.existe_prc(idprc)) { 
+                if (c.consultar_prc(idprc).existe_job(idjob)) c.eliminar_job_prc(idprc,idjob); 
+                else cout << "error: no existe proceso" << endl;
+            }
+            else cout << "error: no existe procesador" << endl;
 
         }
 
@@ -108,18 +115,14 @@ int main() {
         else if (comando == "at" or comando == "avanzar_tiempo") {     //9
             int t;
             cin >> t;
-            c.avanzar_tiempo(t);
+            c.avanzar_tiempo_prc(t);
         }
 
         else if (comando == "ipri" or comando == "imprimir_prioridad") {   //10
             string id_prior;
             cin >> id_prior;
-            if (ae.existe_prior(id_prior)) {
-                ae.escribir_prior(id_prior);
-                cout << endl;
-                ae.escribir_intentos(id_prior);
-            }
-            else cout << "error" << endl;
+            if (ae.existe_prior(id_prior)) ae.escribir_prior(id_prior);
+            else cout << "error: no existe prioridad" << endl;
         }
 
         else if (comando == "iae" or comando == "imprimir_area_espera") ae.escribir();  //11

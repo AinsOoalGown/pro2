@@ -11,8 +11,17 @@ void Cluster::add_job_prc(string id, Proceso p) {
     mprc[id].add_job(p);
 }
 
-void Cluster::avanzar_tiempo(int t) {
+void Cluster::eliminar_job_prc(string idprc, int idjob) {
+    mprc[idprc].eliminar_job(idjob);
+}
 
+void Cluster::avanzar_tiempo_prc(int t) {
+    map <string, Procesador>::iterator it;
+    for (it = mprc.begin(); it != mprc.end(); ++it) {
+        (*it).second.avanzar_tiempo(t);
+    }
+    
+    
 }
 
 void Cluster::añadir_cluster(const Cluster& c, string id) {
@@ -64,13 +73,14 @@ void Cluster::escribir_arbol(const BinTree<string>& a) const {
         cout << a.value();
         escribir_arbol(a.left());
         escribir_arbol(a.right());
+        cout << ')';
     }
-    else cout << ')';
+    else cout << ' ';
 }
 
 void Cluster::escribir_est() const {
     escribir_arbol(Tprc);
-    cout << ')' << endl;
+    cout << endl;
 }
 
 void Cluster::escribir_todos() const {
@@ -81,7 +91,5 @@ void Cluster::escribir_todos() const {
 }
 
  void Cluster::escribir_prc(string id) const { 
-    if (mprc.at(id).en_curso()) {
-        mprc.at(id).escribir();
-    }
+    if (mprc.at(id).en_curso()) mprc.at(id).escribir();
  }
