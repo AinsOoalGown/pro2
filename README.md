@@ -1,2 +1,2 @@
-# practica de pro2
+# Practica de pro2
 Simulación del rendimiento de procesadores interconectados
