@@ -10,6 +10,8 @@
 #include "Cluster.hh"
 #include "Prioridad.hh"
 #ifndef NO_DIAGRAM
+#include <string>
+#include <iostream>
 #include <vector>
 #include <map>
 #endif
@@ -21,7 +23,7 @@
 class Area_espera {
 
 private:
-
+    /** @brief Mapa de prioridades ordenado lexicográficamente por su id */
     map <string, Prioridad> mprior;
 
 public:

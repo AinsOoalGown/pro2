@@ -20,11 +20,30 @@ using namespace std;
 class Procesador {
 
 private:
+    /** @brief Pair con el id y memoria maxima del procesador
+     
+      first = string con el id del procesador, second = entero con capacidad/memoria máxima del procesador 
+    */
     pair <string, int> id_mem; //id + mem_max
+
+    /** @brief Mapa de procesos ordenado crecientemente por su id */
     map <int, Proceso> mjob;
+
+    /** @brief Mapa del los índices de las posiciones de los procesos en la memoria
+      
+      key = index, value = pair; first = space; second = id
+     */
     map <int, pair<int, int> > mmem; //key = index, value = pair; first = space; second = id
-    int mem;  //mem <= mem_max
-    void search_mem_stack(int memo, int& ind);
+    
+    /** @brief Entero de la memoria restante, mem <= mem_max */
+    int mem; 
+
+    /** @brief Busca el índice de memoria con espacio contiguo más ajustado 
+     
+        \pre Hay almenos un proceso activo, 0 < memo < mem_max, memo <= espacio libre contiguo más grande
+        \post Devuelve el índice de la posición con espacio libre más ajustado al tamaño del proceso (memo)
+    */
+    static int search_mem_stack(int memo, const pair <string, int> id_m, const map <int, pair<int, int> > mem);
     
 
 public:
@@ -38,9 +57,20 @@ public:
     */
     Procesador();
 
+    /** @brief Creadora con valores concretos.
+
+      \pre m > 0
+      \post El resultado es un proceso con id "s" y memoria máxima "m"
+    */
     Procesador(string s, int m);
+
     //Modificadoras
 
+    /** @brief Avanza el tiempo del procesador 
+     
+        \pre El p.i. (P) está inicializado, t > 0
+        \post El p.i. contiene los procesos con T - t > 0, en caso que los procesos son eliminados T - t <= 0 los procesos son eliminados
+    */
     void avanzar_tiempo(int t);
     
     /** @brief Añade un proceso al procesador 

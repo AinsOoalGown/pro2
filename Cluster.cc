@@ -1,6 +1,8 @@
+/** @file Cluster.cc
+    @brief Código de la clase Cluster
+*/
+
 #include "Cluster.hh"
-#include <utility>
-#include <iostream>
 using namespace std;
 
 Cluster::Cluster() {
@@ -46,7 +48,7 @@ bool Cluster::existe_aux(string id) const {
     return false;
 }
 
-void Cluster::leer_arbol(BinTree<string>& a) {
+void Cluster::leer_arbol(BinTree<string>& a, map <string, Procesador>& mpr) {
     BinTree<string> l, r;
     string s;
     cin >> s;
@@ -54,9 +56,9 @@ void Cluster::leer_arbol(BinTree<string>& a) {
         int m;
         cin >> m;
         Procesador prc(s, m);
-        mprc.insert(make_pair(s, prc));
-        leer_arbol(l);
-        leer_arbol(r);
+        mpr.insert(make_pair(s, prc));
+        leer_arbol(l, mpr);
+        leer_arbol(r, mpr);
         a = BinTree<string>(s, l, r);
     }
     else a = BinTree<string>();
@@ -64,10 +66,10 @@ void Cluster::leer_arbol(BinTree<string>& a) {
 }
 
 void Cluster::leer() {
- leer_arbol(Tprc);
+ leer_arbol(Tprc, mprc);
 }
 
-void Cluster::escribir_arbol(const BinTree<string>& a) const {
+void Cluster::escribir_arbol(const BinTree<string>& a) {
     if (not a.empty()) {
         cout << '(';
         cout << a.value();

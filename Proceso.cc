@@ -1,3 +1,7 @@
+/** @file Proceso.cc
+    @brief Código de la clase Proceso
+*/
+
 #include "Proceso.hh"
 
 Proceso::Proceso() {

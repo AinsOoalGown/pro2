@@ -19,10 +19,18 @@ using namespace std;
 class Proceso {
 
 private:
+    /** @brief Entero identificador del proceso */
     int id;
+
+    /** @brief Tiempo de ejecución restante de el proceso */
     int t_ejec;
-    pair <int, int> ind_mem; //first = indice que ocupa en el mem, second = mem que ocupa
-    bool en_curso;
+
+    /** @brief Pair de enteros con el índice de memoria y memoria ocupada del proceso
+     
+      first = índice de la posición que ocupa en el memoria, second = memoria que ocupa
+    */
+    pair <int, int> ind_mem; 
+
 public:
     //Constructoras
 
@@ -36,8 +44,18 @@ public:
 
     //Modificadoras
 
+    /** @brief Añade el índice de la posición que ocupa en memoria 
+     
+      \pre <em>cierto</em>
+      \post El resultado es el p.i. con el índice = ind
+  */
     void add_indice (int ind);
 
+    /** @brief Resta el tiempo de ejecución del proceso
+     
+      \pre <em> tiempo = T, T > 0 </em>
+      \post El resultado es el p.i. con tiempo = T - t , tiempo >= 0
+  */
     void restar_tiempo(int t);
 
     //Consultoras
@@ -50,12 +68,20 @@ public:
 
     /** @brief Consultora de la memoria del proceso
         \pre <em>cierto</em>
-        \post El resultado la memoria del parámetro implícito
+        \post El resultado es la memoria del parámetro implícito
     */
     int consultar_MEM() const;
 
+    /** @brief Consultora del índice del proceso
+        \pre <em>cierto</em>
+        \post El resultado es el índice de la posición que ocupa en la memoria del parámetro implícito
+    */
     int consultar_ind() const;
 
+    /** @brief Consultora del tiempo de ejecución restante del proceso
+        \pre <em>cierto</em>
+        \post El resultado es el tiempo de ejecución restante del parámetro implícito
+    */
     int consultar_tiempo() const;
 
     //Lectura y escritura

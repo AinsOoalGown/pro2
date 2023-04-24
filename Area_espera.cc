@@ -1,6 +1,8 @@
+/** @file Area_espera.cc
+    @brief Código de la clase Area_espera
+*/
+
 #include "Area_espera.hh"
-#include <string>
-#include <iostream>
 using namespace std;
 
 Area_espera::Area_espera() {
@@ -62,8 +64,5 @@ void Area_espera::escribir() const {
 void Area_espera::escribir_prior(string id_prior) const {
     Prioridad p = mprior.at(id_prior);
     if (p.en_espera()) p.escribir_job();   
-    p.escribir_enviados();
-    cout << ' ';
-    p.escribir_rechazados();
-    cout << endl;
+    p.escribir_env_rech();
 }

@@ -18,12 +18,22 @@
 class Prioridad {
 
 private:
+    /** @brief Cadena de caracteres que identifica a la prioridad */
     string id_prior;
+
+    /** @brief Cola de enteros correspondientes a los id de los procesos
+     
+      Ordenada por orden de antigüedad de entrada de los procesos*/
     queue <int> antique;
+
+    /** @brief Numero de procesos enviados (aceptados) al cluster */
     int proc_env;
+
+    /** @brief Numero de procesos enviados (rechazados) al cluster */
     int proc_rechazados;
-    map <int, Proceso> mjob; //Vector de procesos pendientes (puede estar vacio)
-    bool pendiente;       //true si hay algun proceso pendiente con id_prior, false si esta vacio
+
+    /** @brief Mapa de procesos ordenado crecientemente por su id */
+    map <int, Proceso> mjob; //Vector de procesos pendientes (puede estar vacio) 
 
 public:
     //Constructoras 
@@ -75,6 +85,7 @@ public:
       \post El resultado indica si la prioridad tiene procesos pendientes
     */
     bool en_espera() const;
+
     //Lectura y escritura
 
     /** @brief Operación de escritura de todos los procesos <em>PENDIENTES</em>
@@ -85,21 +96,13 @@ public:
     */
     void escribir_job() const;
 
-    /** @brief Operación de escritura de el numero de procesos enviados (correctamente) al clúster
+    /** @brief Operación de escritura de el numero de procesos aceptados y rechazados en/por el cluster
 
        \pre <em>cierto</em>
-       \post Se ha escrito el número de procesos enviados (aceptados) al clúster desde el área de
+       \post Se ha escrito el número de procesos enviados (aceptados) 
+       y el número de rechazos (el total de todos los procesos) al clúster desde el área de
         espera en el canal standard de salida. 
     */
-    void escribir_enviados() const;
-
-    /** @brief Operación de escritura de el numero de rechazos de el envio del área de espera al cluster
-
-       \pre <em>cierto</em>
-       \post Se ha escrito el número de rechazos (el total de todos los procesos) en el canal standard de salida. 
-    */
-    void escribir_rechazados() const;
-
-
+    void escribir_env_rech() const;
 };
 #endif

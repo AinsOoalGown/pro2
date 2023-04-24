@@ -26,10 +26,22 @@
 class Cluster {
 
 private:
+    /** @brief Estructura de procesadores del cluster */
     BinTree<string> Tprc;
+    /** @brief Mapa de procesadores ordenado crecientemente por su id */
     map <string, Procesador> mprc;
-    void leer_arbol(BinTree<string>& a);
-    void escribir_arbol(const BinTree<string>& a) const;
+  
+   /** @brief Operación de lectura de un árbol de procesadores
+      \pre  a es vacío; 
+      \post a contiene el árbol de procesadores leído de la entrada
+  */
+    static void leer_arbol(BinTree<string>& a, map <string, Procesador>& mpr);
+    
+    /** @brief Operación de escritura de un árbol de procesadores
+      \pre  cierto
+      \post Se ha escrito a por el canal de salida estándard
+  */
+    static void escribir_arbol(const BinTree<string>& a);
 
 public:
 
@@ -45,11 +57,22 @@ public:
 
     //Modificadoras
 
+    /** @brief Añade un proceso en un procesador
+     
+      \pre no existe p en el procesador con iD = id, 
+      la memoria de p <= memoria contigua más grande del procesador
+      \post El resultado es el procesador con ID = id con los procesos originales más p 
+    */
     void add_job_prc(string id, Proceso p);
 
+    /** @brief Elimina un proceso del procesador 
+     
+        \pre Existe un proceso en el procesador ,con ID = idprc, con ID = idjob
+        \post El procesador con ID = isprc contiene sus procesos originales menos el proceso con ID = idjob 
+    */
     void eliminar_job_prc(string idprc, int idjob);
 
-    /** @brief Avanza el tiempo total
+    /** @brief Avanza el tiempo del cluster
      
       \pre <em>cierto</em>
       \post El resultado es el tiempo original más t y la eliminación de los procesos con tiempo <= t
