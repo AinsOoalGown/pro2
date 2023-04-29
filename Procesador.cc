@@ -59,7 +59,7 @@ void Procesador::add_job(Proceso p) {
     int ind = 0;
     if (not mjob.empty()) {
         int memo = p.consultar_MEM();
-        ind = search_mem_stack(memo, id_mem.second, mmem);
+        ind = search_mem_stack(memo, id_mem.second, mmem);    
     }
     mem += p.consultar_MEM();
     pair <int, int> par (p.consultar_MEM(), p.consultar_ID());
@@ -81,13 +81,19 @@ void Procesador::compactar_mem() {  //no se usa
 
 void Procesador::avanzar_tiempo(int t) {
     if (not mjob.empty()) {
-        map <int, Proceso>::iterator it;
-        for (it = mjob.begin(); it != mjob.end(); ++it) {
+        map <int, Proceso>::iterator it = mjob.begin();
+        queue <int> q;
+        while (it != mjob.end()) {
             if ((*it).second.consultar_tiempo() <= t) {
                 int id = (*it).second.consultar_ID();
-                eliminar_job(id);
+                q.push(id);
             }
-            else (*it).second.restar_tiempo(t);   
+            else (*it).second.restar_tiempo(t);          
+            ++it;
+        }
+        while (not q.empty()) {
+            eliminar_job(q.front());
+            q.pop();
         }
     }
 }

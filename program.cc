@@ -16,6 +16,7 @@ Sólo se documentan los elementos públicos.
 #include "Cluster.hh"
 #include "Area_espera.hh"
 #include "Prioridad.hh"
+#include <chrono>
 
 using namespace std;
 
