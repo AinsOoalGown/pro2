@@ -26,12 +26,14 @@ void Cluster::avanzar_tiempo_prc(int t) {
     
 }
 
-void Cluster::añadir_cluster(const Cluster& c, string id) {
+void Cluster::añadir_cluster(const Cluster& c, string id) { //no se usa
+    c.leer_arbol(Tprc, mprc);
+    mprc[id].avanzar_tiempo(7);
 
 }
 
-void Cluster::compactar() {
-
+void Cluster::compactar() { //no se usa
+    mprc["proc12"].avanzar_tiempo(7);
 }
 
 bool Cluster::existe_prc(string id) const {
@@ -44,8 +46,8 @@ Procesador Cluster::consultar_prc(string id) const {
     return mprc.at(id);
 }
 
-bool Cluster::existe_aux(string id) const {
-    return false;
+bool Cluster::existe_aux(string id) const { // no se usa
+   return mprc.at(id).en_curso();
 }
 
 void Cluster::leer_arbol(BinTree<string>& a, map <string, Procesador>& mpr) {
@@ -66,6 +68,7 @@ void Cluster::leer_arbol(BinTree<string>& a, map <string, Procesador>& mpr) {
 }
 
 void Cluster::leer() {
+ mprc.clear();
  leer_arbol(Tprc, mprc);
 }
 

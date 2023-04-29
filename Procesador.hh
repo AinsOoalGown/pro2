@@ -43,7 +43,7 @@ private:
         \pre Hay almenos un proceso activo, 0 < memo < mem_max, memo <= espacio libre contiguo más grande
         \post Devuelve el índice de la posición con espacio libre más ajustado al tamaño del proceso (memo)
     */
-    static int search_mem_stack(int memo, const pair <string, int> id_m, const map <int, pair<int, int> > mem);
+    static int search_mem_stack(int memo, int mem_max, const map <int, pair<int, int> > mem);
     
 
 public:

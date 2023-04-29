@@ -15,7 +15,7 @@ Procesador::Procesador(string s, int m) {
     mem = 0;
 }
 
-int Procesador::search_mem_stack (int memo, const pair <string, int> id_m, const map <int, pair<int, int> > mem) {
+int Procesador::search_mem_stack (int memo, int mem_max, const map <int, pair<int, int> > mem) {
     map<int,pair<int, int> >::const_iterator it = mem.begin();
     if ((*it).first == memo) return 0;
     //Caso 1: hay un exactamente un proceso
@@ -24,27 +24,32 @@ int Procesador::search_mem_stack (int memo, const pair <string, int> id_m, const
         //el proceso esta en índice 0
         if ((*it).first == 0) return (*it).second.first;
         //el proceso esta al final de la memoria
-        else if (size == id_m.second) return 0;
+        else if (size == mem_max) return 0;
         //el índice del proceso != 0 y ind + esp != mem_max (esta en "medio")
-        else if ((*it).first <= id_m.second - size and (*it).first >= memo) return 0;
+        else if ((*it).first <= mem_max - size and (*it).first >= memo) return 0;
         return size;
     }
     //Caso 2: hay dos o más procesos
     else {
-        bool found = false;
-        int a, b, ind ,min_size;
+        int a, b, min_size;
+        int ind = 0;
         if (memo < (*it).first) min_size = (*it).first;
-        else min_size = id_m.second;
+        else min_size = mem_max;
         b = a = 0;
-        while (it != mem.end() and not found) {
+        while (it != mem.end()) {
             a = (*it).first + (*it).second.first; //indice + espacio
             ++it;
-            if (it != mem.end()) b = (*it).first; //indice sig. elem.
-            if (memo == b - a) return a;
-            else if (b - a < min_size and b - a > memo) {
-                min_size = b - a;
-                ind = a;
-            }            
+            if (it != mem.end()) {
+                b = (*it).first; //indice sig. elem.
+                if (memo == b - a) return a;
+                else if (b - a < min_size and b - a > memo) {
+                    min_size = b - a;
+                    ind = a;
+                } 
+            }
+            else if (mem_max - a >= memo) {
+                if (mem_max - a == memo or mem_max - a < min_size) return a;
+            }           
         }
         return ind;
     }
@@ -52,9 +57,9 @@ int Procesador::search_mem_stack (int memo, const pair <string, int> id_m, const
 
 void Procesador::add_job(Proceso p) {
     int ind = 0;
-    if (not mjob.empty()) { 
+    if (not mjob.empty()) {
         int memo = p.consultar_MEM();
-        ind = search_mem_stack(memo, id_mem, mmem);    
+        ind = search_mem_stack(memo, id_mem.second, mmem);
     }
     mem += p.consultar_MEM();
     pair <int, int> par (p.consultar_MEM(), p.consultar_ID());
@@ -70,8 +75,8 @@ void Procesador::eliminar_job(int id) {
     mmem.erase(mmem.find(ind));
 }
 
-void Procesador::compactar_mem() {
-
+void Procesador::compactar_mem() {  //no se usa
+    mjob[78].escribir();
 }
 
 void Procesador::avanzar_tiempo(int t) {
@@ -102,13 +107,16 @@ int Procesador::consultar_MEM_contigua() const {
         return b;
     }
     int max_consec = 0;
-    if ((*it).first != 0) max_consec = (*it).first + 1; //comença desde 0
+    if ((*it).first != 0) max_consec = (*it).first; //comença desde 0
     a = b = 0;
     while (it != mmem.end()) {
          a = (*it).first + (*it).second.first; //indice + espacio
         ++it;
-        if (it != mmem.end()) b = (*it).first; //indice sig. elem.    
-        if (max_consec < b - a) max_consec = b - a;
+        if (it != mmem.end()) {
+            b = (*it).first; //indice sig. elem.
+            if (max_consec < b - a) max_consec = b - a;
+        }
+        else if (id_mem.second - a > max_consec) max_consec = id_mem.second - a;
     }
     return max_consec;
 }
@@ -123,7 +131,7 @@ bool Procesador::en_curso() const {
     return not mjob.empty();
 }
 
-void Procesador::leer() {
+void Procesador::leer() {   //no se usa
     cin >> id_mem.first;
 }
 

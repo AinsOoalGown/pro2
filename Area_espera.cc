@@ -22,11 +22,11 @@ void Area_espera::eliminar_prior(string id_prior) {
     mprior.erase(id_prior);
 }
 
-void Area_espera::enviar_job_a_cluster() {
-
+void Area_espera::enviar_job_a_cluster() {  //no se usa
+    mprior["proc12"].escribir_job();
 }
 
-bool Area_espera::pendiente_global() const {
+bool Area_espera::pendiente_global() const {  //no se usa
     return false;
 }
 
@@ -63,6 +63,6 @@ void Area_espera::escribir() const {
 
 void Area_espera::escribir_prior(string id_prior) const {
     Prioridad p = mprior.at(id_prior);
-    if (p.en_espera()) p.escribir_job();   
+    if (p.en_espera()) p.escribir_job(); 
     p.escribir_env_rech();
 }
