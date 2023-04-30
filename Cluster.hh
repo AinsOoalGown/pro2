@@ -65,15 +65,15 @@ public:
       \pre no existe p en el procesador con iD = id, 
       la memoria de p <= memoria contigua más grande del procesador
       \post El resultado es el procesador con ID = id con los procesos originales más p 
-      \coste Constante
+      \coste Lineal (consultar coste de add_job() de la clase Procesador)
     */
     void add_job_prc(string id, Proceso p);
 
     /** @brief Elimina un proceso del procesador 
      
         \pre Existe un proceso en el procesador ,con ID = idprc, con ID = idjob
-        \post El procesador con ID = isprc contiene sus procesos originales menos el proceso con ID = idjob 
-        \coste Constante
+        \post El procesador con ID = idprc contiene sus procesos originales menos el proceso con ID = idjob 
+        \coste Logarítmico (consultar coste de eliminar_job() de la clase Procesador)
     */
     void eliminar_job_prc(string idprc, int idjob);
 
@@ -81,7 +81,7 @@ public:
      
       \pre <em>cierto</em>
       \post El resultado es el tiempo original más t y la eliminación de los procesos con tiempo <= t
-      \coste Lineal respecto al número de procesadores del cluster 
+      \coste Lineal sobre coste lineal (consultar coste de avanzar_tiempo() de la clase Procesador)
     */
     void avanzar_tiempo_prc(int t);
  
@@ -142,7 +142,7 @@ public:
       \pre <em>cierto</em>
       \post Se ha escrito la estructura del parámetro implícito en el canal
       standard de salida. 
-      \coste Lineal respecto al número de procesadpres del cluster escrito
+      \coste Lineal respecto al número de procesadores del cluster escrito
     */
     void escribir_est() const; //escribe la estructura del cluster
 
@@ -151,7 +151,7 @@ public:
       \pre <em>cierto</em>
       \post Se han escrito los procesos de todos los procesadores del parámetro implícito en el canal
       standard de salida. 
-      \coste Lineal respecto al número de procesos de todos los procesadores del cluster
+      \coste Lineal sobre coste lineal respecto al número de procesos de todos los procesadores del cluster
     */
     void escribir_todos() const; //utiliza "escribir_proc" para todos los id
 

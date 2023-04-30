@@ -22,8 +22,6 @@ void Cluster::avanzar_tiempo_prc(int t) {
     for (it = mprc.begin(); it != mprc.end(); ++it) {
         (*it).second.avanzar_tiempo(t);
     }
-    
-    
 }
 
 void Cluster::añadir_cluster(const Cluster& c, string id) { //no se usa

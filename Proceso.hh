@@ -38,7 +38,8 @@ public:
      
         Se ejecuta automáticamente al declarar un proceso.
         \pre <em>cierto</em>
-        \post El resultado es un proceso con todos los atributos enteros a -1 y la string con "???" 
+        \post El resultado es un proceso
+        \coste Constante
     */
     Proceso();
 
@@ -48,6 +49,7 @@ public:
      
       \pre <em>cierto</em>
       \post El resultado es el p.i. con el índice = ind
+      \coste Constante
   */
     void add_indice (int ind);
 
@@ -55,6 +57,7 @@ public:
      
       \pre <em> tiempo = T, T > 0 </em>
       \post El resultado es el p.i. con tiempo = T - t , tiempo >= 0
+      \coste Constante
   */
     void restar_tiempo(int t);
 
@@ -63,24 +66,29 @@ public:
     /** @brief Consultora del id del proceso
         \pre <em>cierto</em>
         \post El resultado el id del parámetro implícito
+        \coste Constante
     */
     int consultar_ID() const;
 
     /** @brief Consultora de la memoria del proceso
         \pre <em>cierto</em>
         \post El resultado es la memoria del parámetro implícito
+        \coste Constante
     */
     int consultar_MEM() const;
 
     /** @brief Consultora del índice del proceso
         \pre <em>cierto</em>
-        \post El resultado es el índice de la posición que ocupa en la memoria del parámetro implícito
+        \post El resultado es el índice de la posición que ocupa 
+        en la memoria del parámetro implícito
+        \coste Constante
     */
     int consultar_ind() const;
 
     /** @brief Consultora del tiempo de ejecución restante del proceso
         \pre <em>cierto</em>
         \post El resultado es el tiempo de ejecución restante del parámetro implícito
+        \coste Constante
     */
     int consultar_tiempo() const;
 
@@ -89,15 +97,18 @@ public:
     /** @brief Operación de lectura
 
       \pre Hay preparados en el canal standard de entrada los datos de un proceso
-      \post El parámetro ímplicito pasa a tener los atributos leídos del canal standard de entrada
+      \post El parámetro ímplicito pasa a tener los atributos 
+      leídos del canal standard de entrada
+      \coste Constante
     */
     void leer();
 
     /** @brief Operación de escritura
 
       \pre <em>cierto</em>
-      \post Se han escrito los atributos del parámetro implícito en el canal
+      \post Se han escrito los atributos del parámetro implícito en el canal 
       standard de salida. 
+      \coste Constante
     */
     void escribir() const;
 

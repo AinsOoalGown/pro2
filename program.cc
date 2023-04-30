@@ -16,7 +16,6 @@ Sólo se documentan los elementos públicos.
 #include "Cluster.hh"
 #include "Area_espera.hh"
 #include "Prioridad.hh"
-#include <chrono>
 
 using namespace std;
 
@@ -125,7 +124,7 @@ int main() {
             int t;
             cin >> t;
             cout << '#' << comando << ' ' << t << endl;
-            c.avanzar_tiempo_prc(t);
+            c.avanzar_tiempo_prc(t);  
         }
 
         else if (comando == "ipri" or comando == "imprimir_prioridad") {   //10

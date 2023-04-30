@@ -8,12 +8,12 @@ Proceso::Proceso() {
 
 }
 
-void Proceso::restar_tiempo(int t) {
-    t_ejec -= t;
-}
-
 void Proceso::add_indice (int ind) {
     ind_mem.first = ind;
+}
+
+void Proceso::restar_tiempo(int t) {
+    t_ejec -= t;
 }
 
 int Proceso::consultar_ID() const{

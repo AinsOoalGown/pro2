@@ -44,7 +44,7 @@ public:
      
       \pre <em>cierto</em>
       \post El resultado es el p.i. más el proceso p con el ID de proridad = id_prior
-      \coste Logarítmico 
+      \coste Logarítmico sobre coste logarítmico
   */
     void add_job(Proceso p, string id_prior);
 
@@ -113,7 +113,8 @@ public:
 
       \pre Hay preparados en el canal standard de entrada un número inicial de prioridades N > 0 y el identificador de N prioridades
       \post El parámetro ímplicito pasa a tener los atributos leídos del canal standard de entrada
-      \coste Lineal respecto al número de prioridades del área de espera leído
+      \coste Lineal sobre coste logarítmico (inserción en el mapa)
+      respecto al número de prioridades del área de espera leído (nlog(n))
     */
     void leer();
 
@@ -131,7 +132,8 @@ public:
       \pre Existe una prioridad con ID = id_prior en el p.i.
       \post Se ha escrito todos los procesos pendientes con la prioridad id_prior   
         por orden decreciente de antigüedad en el canal standard de salida. 
-      \coste Lineal respecto al número de procesos de la prioridad escrita
+      \coste Lineal respecto al número de procesos de la prioridad escrita,
+      más logarítmico (búsqueda en el mapa)
     */
     void escribir_prior(string id_prior) const; //escribe todos los procesos pendeintes con esta id_prior
 

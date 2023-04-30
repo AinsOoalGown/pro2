@@ -41,7 +41,9 @@ private:
     /** @brief Busca el índice de memoria con espacio contiguo más ajustado 
      
         \pre Hay almenos un proceso activo, 0 < memo < mem_max, memo <= espacio libre contiguo más grande
-        \post Devuelve el índice de la posición con espacio libre más ajustado al tamaño del proceso (memo)
+        \post Devuelve el índice de la posición con espacio libre 
+        más ajustado al tamaño del proceso (memo)
+        \coste Lineal (en el peor de los casos ha de recorrer todo el mapa)
     */
     static int search_mem_stack(int memo, int mem_max, const map <int, pair<int, int> > mem);
     
@@ -53,7 +55,9 @@ public:
 
       Se ejecuta automáticamente al declarar un procesador.
       \pre <em>cierto</em>
-      \post El resultado es un procesador de memoria y memoria máxima 0, sin id y un vector vacío de procesos
+      \post El resultado es un procesador de memoria y memoria máxima 0, 
+      sin id y un vector vacío de procesos
+      \coste Constante
     */
     Procesador();
 
@@ -61,6 +65,7 @@ public:
 
       \pre m > 0
       \post El resultado es un proceso con id "s" y memoria máxima "m"
+      \coste Constante
     */
     Procesador(string s, int m);
 
@@ -69,7 +74,9 @@ public:
     /** @brief Avanza el tiempo del procesador 
      
         \pre El p.i. (P) está inicializado, t > 0
-        \post El p.i. contiene los procesos con T - t > 0, en caso que los procesos son eliminados T - t <= 0 los procesos son eliminados
+        \post El p.i. contiene los procesos con T - t > 0, 
+        en caso que los procesos son eliminados T - t <= 0 los procesos son eliminados
+        \coste Lineal (todo el mapa y toda la cola)
     */
     void avanzar_tiempo(int t);
     
@@ -77,13 +84,15 @@ public:
      
         \pre El p.i. (P) está inicializado, la memoria de p es menor o igual a la memoria actual de P
         \post El p.i. contiene sus procesos originales más p 
+        \coste Lineal (mirar coste de search_mem_stack())
     */
     void add_job(Proceso p);
 
     /** @brief Elimina un proceso del procesador 
      
         \pre Existe un proceso en el p.i. con ID = id
-        \post El p.i. contiene sus procesos originales menos el proceso con ID = id 
+        \post El p.i. contiene sus procesos originales menos el proceso con ID = id
+        \coste Logarítmico (dos .erase de un map)
     */
     void eliminar_job(int id);
 
@@ -91,17 +100,25 @@ public:
      
         \pre <em>cierto</em>
         \post El p.i. contiene los procesos originales desplazados al inicio de la memoria
+        \coste *No implementado*
     */
     void compactar_mem();
 
     //Consultoras
 
+    /** @brief Consultora de el ID del procesador
+     
+      \pre <em>cierto</em>
+      \post El resultado es el ID del p.i.
+      \coste Constante
+    */
     string consultar_ID() const;
 
     /** @brief Consultora de la memoria consecutiva más grande
      
       \pre <em>cierto</em>
       \post El resultado es la memoria consecutiva más grande del p.i.
+      \coste Lineal (en el peor caso ha de recorrer todo el mapa)
     */
     int consultar_MEM_contigua() const;
 
@@ -109,6 +126,7 @@ public:
      
       \pre El p.i. esta inicializado
       \post El resultado indicia si existe un proceso en el p.i. con ID = id
+      \coste Logarítmico
     */
     bool existe_job(int id) const;
 
@@ -116,6 +134,7 @@ public:
      
       \pre <em>cierto</em>
       \post El resultado indica si el procesador contiene almenos un proceso en ejecución
+      \coste Constante
     */
     bool en_curso() const;
 
@@ -124,7 +143,8 @@ public:
     /** @brief Operación de lectura
 
       \pre Hay preparados en el canal standard de entrada los datos de un procesador
-      \post El parámetro ímplicito pasa a tener los atributos leídos del canal standard de entrada 
+      \post El parámetro ímplicito pasa a tener los atributos leídos del canal standard de entrada
+      \coste Constante
     */
     void leer(); 
 
@@ -132,7 +152,8 @@ public:
 
       \pre <em>cierto</em>
       \post Se han escrito los atributos del parámetro implícito en el canal
-      standard de salida. 
+      standard de salida.
+      \coste Lineal 
     */
     void escribir() const;
 };

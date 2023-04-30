@@ -9,7 +9,7 @@ Prioridad::Prioridad() {
 }
 
 Prioridad::Prioridad(string id_pri) {
-    id_prior == id_pri;
+    id_prior = id_pri;
     proc_env = proc_rechazados = 0;
 }
 
