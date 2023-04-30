@@ -3,8 +3,10 @@ Simulación del rendimiento de procesadores interconectados
 
 Juego de pruebas 3/4 
 
--Public Test
+-Test público
 
--1st Private Test
+-1er test Privado
 
--2nd Private Test
+-2ndo test privado
+
+Costes incluidos
