@@ -38,11 +38,12 @@ private:
     /** @brief Entero de la memoria restante, mem <= mem_max */
     int mem; 
 
-    /** @brief Busca el índice de memoria con espacio contiguo más ajustado 
+    /** @brief Busca el índice de memoria con espacio contiguo más ajustado, si existe
      
-        \pre Hay almenos un proceso activo, 0 < memo < mem_max, memo <= espacio libre contiguo más grande
+        \pre Hay almenos un proceso activo, 0 < memo
         \post Devuelve el índice de la posición con espacio libre 
-        más ajustado al tamaño del proceso (memo)
+        más ajustado al tamaño del proceso (memo) en caso de que exista,
+        devuelve -1 si no
         \coste Lineal (en el peor de los casos ha de recorrer todo el mapa)
     */
     static int search_mem_stack(int memo, int mem_max, const map <int, pair<int, int> > mem);
@@ -86,7 +87,7 @@ public:
         \post El p.i. contiene sus procesos originales más p 
         \coste Lineal (mirar coste de search_mem_stack())
     */
-    void add_job(Proceso p);
+    void add_job(Proceso p, bool& added);
 
     /** @brief Elimina un proceso del procesador 
      
@@ -113,14 +114,6 @@ public:
       \coste Constante
     */
     string consultar_ID() const;
-
-    /** @brief Consultora de la memoria consecutiva más grande
-     
-      \pre <em>cierto</em>
-      \post El resultado es la memoria consecutiva más grande del p.i.
-      \coste Lineal (en el peor caso ha de recorrer todo el mapa)
-    */
-    int consultar_MEM_contigua() const;
 
     /** @brief Consultora de la existencia de un proceso
      

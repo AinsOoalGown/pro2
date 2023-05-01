@@ -21,19 +21,25 @@ int Procesador::search_mem_stack (int memo, int mem_max, const map <int, pair<in
     //Caso 1: hay un exactamente un proceso
     if (mem.size() == 1) {
         int size = (*it).first + (*it).second.first;
-        //el proceso esta en índice 0
-        if ((*it).first == 0) return (*it).second.first;
-        //el proceso esta al final de la memoria
-        else if (size == mem_max) return 0;
-        //el índice del proceso != 0 y ind + esp != mem_max (esta en "medio")
-        else if ((*it).first <= mem_max - size and (*it).first >= memo) return 0;
-        return size;
+        if ((*it).first == 0) {
+            if (mem_max - size < memo) return -1;
+            return (*it).second.first;
+        }
+        if ((*it).first < memo) {
+            if (size == mem_max) return -1;
+            if (mem_max - size < memo) return -1;
+            return size;
+        }
+        return 0;
     }
     //Caso 2: hay dos o más procesos
     else {
         int a, b, min_size;
-        int ind = 0;
-        if (memo < (*it).first) min_size = (*it).first;
+        int ind = -1;
+        if (memo < (*it).first) {
+            min_size = (*it).first;
+            ind = 0;
+        }
         else min_size = mem_max;
         b = a = 0;
         while (it != mem.end()) {
@@ -55,17 +61,21 @@ int Procesador::search_mem_stack (int memo, int mem_max, const map <int, pair<in
     }
 }
 
-void Procesador::add_job(Proceso p) {
+void Procesador::add_job(Proceso p, bool& added) {
     int ind = 0;
     if (not mjob.empty()) {
         int memo = p.consultar_MEM();
-        ind = search_mem_stack(memo, id_mem.second, mmem);    
+        ind = search_mem_stack(memo, id_mem.second, mmem);   
     }
-    mem += p.consultar_MEM();
-    pair <int, int> par (p.consultar_MEM(), p.consultar_ID());
-    mmem.insert(make_pair(ind, par));
-    p.add_indice(ind);
-    mjob.insert(make_pair(p.consultar_ID(), p));
+    if (ind == -1) added = false;
+    else {
+        added = true;
+        mem += p.consultar_MEM();
+        pair <int, int> par (p.consultar_MEM(), p.consultar_ID());
+        mmem.insert(make_pair(ind, par));
+        p.add_indice(ind);
+        mjob.insert(make_pair(p.consultar_ID(), p));
+    }
 }
 
 void Procesador::eliminar_job(int id) {
@@ -100,31 +110,6 @@ void Procesador::avanzar_tiempo(int t) {
 
 string Procesador::consultar_ID() const {
     return id_mem.first;
-}
-
-int Procesador::consultar_MEM_contigua() const {
-    int a, b;
-    map <int,pair<int,int> >::const_iterator it = mmem.begin();
-    if (mem == 0) return id_mem.second;
-    else if (mmem.size() == 1) {
-        a = id_mem.second - (*it).second.first;
-        b = (*it).first;
-        if (a >= b) return a;
-        return b;
-    }
-    int max_consec = 0;
-    if ((*it).first != 0) max_consec = (*it).first; //comença desde 0
-    a = b = 0;
-    while (it != mmem.end()) {
-         a = (*it).first + (*it).second.first; //indice + espacio
-        ++it;
-        if (it != mmem.end()) {
-            b = (*it).first; //indice sig. elem.
-            if (max_consec < b - a) max_consec = b - a;
-        }
-        else if (id_mem.second - a > max_consec) max_consec = id_mem.second - a;
-    }
-    return max_consec;
 }
 
 bool Procesador::existe_job(int id) const {

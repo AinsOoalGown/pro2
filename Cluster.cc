@@ -9,8 +9,8 @@ Cluster::Cluster() {
 
 }
 
-void Cluster::add_job_prc(string id, Proceso p) {
-    mprc[id].add_job(p);
+void Cluster::add_job_prc(string id, Proceso p, bool& added) {
+    mprc[id].add_job(p, added);
 }
 
 void Cluster::eliminar_job_prc(string idprc, int idjob) {

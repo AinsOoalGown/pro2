@@ -62,12 +62,12 @@ public:
 
     /** @brief Añade un proceso en un procesador
      
-      \pre no existe p en el procesador con iD = id, 
-      la memoria de p <= memoria contigua más grande del procesador
-      \post El resultado es el procesador con ID = id con los procesos originales más p 
-      \coste Lineal (consultar coste de add_job() de la clase Procesador)
+      \pre no existe p en el procesador con ID = id
+      \post El resultado es el procesador con ID = id con los procesos originales más p si added = true,
+      en caso contrario devuelve added = false 
+      \coste Logarítmico sobre coste lineal (consultar coste de add_job() de la clase Procesador)
     */
-    void add_job_prc(string id, Proceso p);
+    void add_job_prc(string id, Proceso p, bool& added);
 
     /** @brief Elimina un proceso del procesador 
      
