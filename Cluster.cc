@@ -9,11 +9,11 @@ Cluster::Cluster() {
 
 }
 
-void Cluster::add_job_prc(string id, Proceso p, bool& added) {
-    mprc[id].add_job(p, added);
+void Cluster::add_job_prc(const string& id, Proceso& p, bool& added) {
+    mprc[id].add_job(p,added);
 }
 
-void Cluster::eliminar_job_prc(string idprc, int idjob) {
+void Cluster::eliminar_job_prc(const string& idprc, int idjob) {
     mprc[idprc].eliminar_job(idjob);
 }
 
@@ -24,7 +24,7 @@ void Cluster::avanzar_tiempo_prc(int t) {
     }
 }
 
-void Cluster::añadir_cluster(const Cluster& c, string id) { //no se usa
+void Cluster::añadir_cluster(const Cluster& c, const string& id) { //no se usa
     c.leer_arbol(Tprc, mprc);
     mprc[id].avanzar_tiempo(7);
 
@@ -34,17 +34,17 @@ void Cluster::compactar() { //no se usa
     mprc["proc12"].avanzar_tiempo(7);
 }
 
-bool Cluster::existe_prc(string id) const {
+bool Cluster::existe_prc(const string& id) const {
     map <string,Procesador>::const_iterator it = mprc.find(id);
     if (it == mprc.end()) return false;
     return true;
 }
 
-Procesador Cluster::consultar_prc(string id) const {
+Procesador Cluster::consultar_prc(const string& id) const {
     return mprc.at(id);
 }
 
-bool Cluster::existe_aux(string id) const { // no se usa
+bool Cluster::existe_aux(const string& id) const { // no se usa
    return mprc.at(id).en_curso();
 }
 
@@ -93,6 +93,6 @@ void Cluster::escribir_todos() const {
     }
 }
 
- void Cluster::escribir_prc(string id) const { 
+ void Cluster::escribir_prc(const string& id) const { 
     if (mprc.at(id).en_curso()) mprc.at(id).escribir();
  }

@@ -9,6 +9,7 @@
 #include "Proceso.hh"
 #include "Prioridad.hh"
 #ifndef NO_DIAGRAM
+#include<queue>
 #include <utility>
 #include <map>
 #include <vector>
@@ -22,7 +23,8 @@ class Procesador {
 private:
     /** @brief Pair con el id y memoria maxima del procesador
      
-      first = string con el id del procesador, second = entero con capacidad/memoria máxima del procesador 
+      first = string con el id del procesador, 
+      second = entero con capacidad/memoria máxima del procesador 
     */
     pair <string, int> id_mem; //id + mem_max
 
@@ -46,7 +48,7 @@ private:
         devuelve -1 si no
         \coste Lineal (en el peor de los casos ha de recorrer todo el mapa)
     */
-    static int search_mem_stack(int memo, int mem_max, const map <int, pair<int, int> > mem);
+    static int search_mem_stack(int memo, int mem_max, const map <int, pair<int, int> >& mem);
     
 
 public:
@@ -68,7 +70,7 @@ public:
       \post El resultado es un proceso con id "s" y memoria máxima "m"
       \coste Constante
     */
-    Procesador(string s, int m);
+    Procesador(const string& s, int m);
 
     //Modificadoras
 
@@ -83,11 +85,12 @@ public:
     
     /** @brief Añade un proceso al procesador 
      
-        \pre El p.i. (P) está inicializado, la memoria de p es menor o igual a la memoria actual de P
+        \pre El p.i. (P) está inicializado, la memoria de p es menor 
+        o igual a la memoria actual de P
         \post El p.i. contiene sus procesos originales más p 
         \coste Lineal (mirar coste de search_mem_stack())
     */
-    void add_job(Proceso p, bool& added);
+    void add_job(Proceso& p, bool& added);
 
     /** @brief Elimina un proceso del procesador 
      
@@ -100,7 +103,8 @@ public:
     /** @brief Compacta la memoria del procesador 
      
         \pre <em>cierto</em>
-        \post El p.i. contiene los procesos originales desplazados al inicio de la memoria
+        \post El p.i. contiene los procesos originales desplazados 
+        al inicio de la memoria
         \coste *No implementado*
     */
     void compactar_mem();
@@ -126,7 +130,8 @@ public:
     /** @brief Consultora si el procesador esta activo
      
       \pre <em>cierto</em>
-      \post El resultado indica si el procesador contiene almenos un proceso en ejecución
+      \post El resultado indica si el procesador contiene almenos 
+      un proceso en ejecución
       \coste Constante
     */
     bool en_curso() const;
@@ -136,7 +141,8 @@ public:
     /** @brief Operación de lectura
 
       \pre Hay preparados en el canal standard de entrada los datos de un procesador
-      \post El parámetro ímplicito pasa a tener los atributos leídos del canal standard de entrada
+      \post El parámetro ímplicito pasa a tener los atributos leídos 
+      del canal standard de entrada
       \coste Constante
     */
     void leer(); 

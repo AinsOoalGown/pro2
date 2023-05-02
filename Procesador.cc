@@ -9,13 +9,13 @@ Procesador::Procesador() {
     id_mem.second = 0;
 }
 
-Procesador::Procesador(string s, int m) {
+Procesador::Procesador(const string& s, int m) {
     id_mem.first = s;
     id_mem.second = m;
     mem = 0;
 }
 
-int Procesador::search_mem_stack (int memo, int mem_max, const map <int, pair<int, int> > mem) {
+int Procesador::search_mem_stack (int memo, int mem_max, const map <int, pair<int, int> >& mem) {
     map<int,pair<int, int> >::const_iterator it = mem.begin();
     if ((*it).first == memo) return 0;
     //Caso 1: hay un exactamente un proceso
@@ -61,7 +61,7 @@ int Procesador::search_mem_stack (int memo, int mem_max, const map <int, pair<in
     }
 }
 
-void Procesador::add_job(Proceso p, bool& added) {
+void Procesador::add_job(Proceso& p, bool& added) {
     int ind = 0;
     if (not mjob.empty()) {
         int memo = p.consultar_MEM();

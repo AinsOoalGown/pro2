@@ -9,16 +9,16 @@ Area_espera::Area_espera() {
 
 }
 
-void Area_espera::add_job(Proceso p, string id_prior) {
+void Area_espera::add_job(const Proceso& p, const string& id_prior) {
     mprior[id_prior].add_job(p);
 }
 
-void Area_espera::add_prior(string id_prior) {
+void Area_espera::add_prior(const string& id_prior) {
     Prioridad p (id_prior);
     mprior.insert(make_pair(id_prior, p));
 }
 
-void Area_espera::eliminar_prior(string id_prior) {
+void Area_espera::eliminar_prior(const string& id_prior) {
     mprior.erase(id_prior);
 }
 
@@ -30,15 +30,15 @@ bool Area_espera::pendiente_global() const {  //no se usa
     return false;
 }
 
-bool Area_espera::id_prior_pendiente (string id_prior) const {
+bool Area_espera::id_prior_pendiente (const string& id_prior) const {
     return mprior.at(id_prior).en_espera();
 }
 
-bool Area_espera::existe_prior(string id_prior) const {
+bool Area_espera::existe_prior(const string& id_prior) const {
     return (mprior.find(id_prior) != mprior.end());
 }
 
-bool Area_espera::existe_prior_job(string id_prior, int id) const {
+bool Area_espera::existe_prior_job(const string& id_prior, int id) const {
    return mprior.at(id_prior).existe_job(id);
 }
 
@@ -61,7 +61,7 @@ void Area_espera::escribir() const {
 
 }
 
-void Area_espera::escribir_prior(string id_prior) const {
+void Area_espera::escribir_prior(const string& id_prior) const {
     Prioridad p = mprior.at(id_prior);
     if (p.en_espera()) p.escribir_job(); 
     p.escribir_env_rech();

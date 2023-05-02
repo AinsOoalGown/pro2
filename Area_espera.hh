@@ -46,7 +46,7 @@ public:
       \post El resultado es el p.i. más el proceso p con el ID de proridad = id_prior
       \coste Logarítmico sobre coste logarítmico
   */
-    void add_job(Proceso p, string id_prior);
+    void add_job(const Proceso& p, const string& id_prior);
 
     /** @brief Añade una prioridad al área de espera
      
@@ -54,7 +54,7 @@ public:
       \post El resultado es el p.i. más la prioridad con id_prior
       \coste Logarítmico (búsqueda del elemento en el árbol de búsqueda binario interno)
   */
-    void add_prior(string id_prior);
+    void add_prior(const string& id_prior);
 
     /** @brief Elimina una prioridad del área de espera
      
@@ -62,7 +62,7 @@ public:
         \post El p.i. contiene sus prioridades originales menos la prioridad con ID de prioridad = id_prior
         \coste Logarítmico (búsqueda del elemento en el árbol de búsqueda binario interno)
     */
-    void eliminar_prior(string id_prior);
+    void eliminar_prior(const string& id_prior);
 
     /** @brief Envia un proceso del área de espera al clúster 
      
@@ -89,7 +89,7 @@ public:
        \post El resultado indica si aun quedan procesos pendientes con ID de prioridad = id_prior
        \coste Logarítmico
   */
-    bool id_prior_pendiente (string id_prior) const; //devuelve true si hay algun proceso pendiente con id_prior
+    bool id_prior_pendiente (const string& id_prior) const; //devuelve true si hay algun proceso pendiente con id_prior
     
     /** @brief Consultora de la existencia de una prioridad en el área de espera 
 
@@ -97,7 +97,7 @@ public:
        \post El resultado indica si existe la prioridad con id_prior en el p.i.
        \coste Logarítmico   
   */
-    bool existe_prior(string id_prior) const;
+    bool existe_prior(const string& id_prior) const;
     
       /** @brief Consultora de la existencia de un proceso con una prioridad en el área de espera  
 
@@ -105,7 +105,7 @@ public:
         \post El resultado indica si el proceso con ID = id y la prioridad con id_prior existe en el p.i.
         \coste Logarítmico sobre coste logarítmico
     */
-    bool existe_prior_job(string id_prior, int id) const;
+    bool existe_prior_job(const string& id_prior, int id) const;
 
     //Lectura y escritura
 
@@ -135,7 +135,7 @@ public:
       \coste Lineal respecto al número de procesos de la prioridad escrita,
       más logarítmico (búsqueda en el mapa)
     */
-    void escribir_prior(string id_prior) const; //escribe todos los procesos pendeintes con esta id_prior
+    void escribir_prior(const string& id_prior) const; //escribe todos los procesos pendeintes con esta id_prior
 
 };
 #endif

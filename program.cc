@@ -87,7 +87,7 @@ int main() {
                 if (not c.consultar_prc(id).existe_job(p.consultar_ID())) { 
                     bool added = false;
                     c.add_job_prc(id, p, added);
-                    if (not added) cout << "error: no cabe proceso" << endl;   
+                    if (not added) cout << "error: no cabe proceso" << endl;
                 }
                 else cout << "error: ya existe proceso" << endl;
             }

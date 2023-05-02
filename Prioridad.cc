@@ -8,13 +8,14 @@ Prioridad::Prioridad() {
     proc_env = proc_rechazados = 0;
 }
 
-Prioridad::Prioridad(string id_pri) {
+Prioridad::Prioridad(const string& id_pri) {
     id_prior = id_pri;
     proc_env = proc_rechazados = 0;
 }
 
-void Prioridad::add_job(Proceso p) {
-    antique.push(p.consultar_ID());
+void Prioridad::add_job(const Proceso& p) {
+    list<int>::iterator it = antique.end();
+    antique.insert(it ,p.consultar_ID());
     mjob.insert(make_pair(p.consultar_ID(),p));
 }
 
@@ -33,10 +34,10 @@ bool Prioridad::en_espera() const {
 }
 
 void Prioridad::escribir_job() const {
-    queue<int> c = antique;
-    while (not c.empty()) {
-        mjob.at(c.front()).escribir();
-        c.pop();
+    list<int>::const_iterator it = antique.begin();
+    while (it != antique.end()) { 
+        mjob.at((*it)).escribir();
+        ++it;
     }
 }
 
