@@ -92,7 +92,6 @@ void Procesador::compactar_mem() {  //no se usa
 void Procesador::avanzar_tiempo(int t) {
     if (not mjob.empty()) {
         map <int, Proceso>::iterator it = mjob.begin();
-        queue <int> q;
         while (it != mjob.end()) {
             if ((*it).second.consultar_tiempo() <= t) {
                 int id = (*it).second.consultar_ID();
