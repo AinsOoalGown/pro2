@@ -1,0 +1,81 @@
+proc1
+10
+proc11
+100
+proc111
+500
+*
+*
+proc112
+500
+*
+*
+proc12
+100
+proc121
+500
+*
+*
+proc122
+500
+*
+*
+4
+1111
+11
+11111
+111
+imprimir_estructura_cluster
+imprimir_area_espera
+imprimir_procesadores_cluster
+alta_proceso_procesador
+pr 99 15 15
+app proc12 99 10 15
+imprimir_procesador pr
+ipro proc12
+app proc1 99 10 10
+ipro proc1
+alta_proceso_procesador
+proc1 99 5 5
+app proc12 101 91 15
+app proc12 101 90 15
+ipc
+baja_proceso_procesador
+pr 99
+bpp proc12 100
+bpp proc12 99
+ipro proc12
+avanzar_tiempo 7
+imprimir_procesador proc12
+at 2
+ipro proc1
+alta_proceso_espera 222 99 10 10
+ape 111 99 10 10
+ape 111 99 20 15
+ape 111 98 1000 20
+ape 111 100 10 1
+imprimir_prioridad 222
+ipri 111
+alta_prioridad 1111
+ap 2
+baja_prioridad 333
+bp 111
+bp 11
+iae
+configurar_cluster
+sndr01
+1000
+*
+*
+iec
+cc
+abc
+10
+*
+zsda
+5
+*
+*
+iec
+iae
+fin
