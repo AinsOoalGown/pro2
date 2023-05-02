@@ -14,7 +14,8 @@ void Cluster::add_job_prc(const string& id, Proceso& p, bool& added) {
 }
 
 void Cluster::eliminar_job_prc(const string& idprc, int idjob) {
-    mprc[idprc].eliminar_job(idjob);
+    map <int,Proceso>::iterator it;
+    mprc[idprc].eliminar_job(idjob, it);
 }
 
 void Cluster::avanzar_tiempo_prc(int t) {

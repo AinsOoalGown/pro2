@@ -98,7 +98,7 @@ public:
         \post El p.i. contiene sus procesos originales menos el proceso con ID = id
         \coste Logarítmico (dos .erase de un map)
     */
-    void eliminar_job(int id);
+    void eliminar_job(int id, map <int,Proceso>::iterator& it);
 
     /** @brief Compacta la memoria del procesador 
      

@@ -78,10 +78,10 @@ void Procesador::add_job(Proceso& p, bool& added) {
     }
 }
 
-void Procesador::eliminar_job(int id) {
+void Procesador::eliminar_job(int id, map <int,Proceso>::iterator& it) {
     mem -= mjob[id].consultar_MEM();
     int ind = mjob[id].consultar_ind();
-    mjob.erase(mjob.find(id));
+    it = mjob.erase(mjob.find(id));
     mmem.erase(mmem.find(ind));
 }
 
@@ -96,14 +96,12 @@ void Procesador::avanzar_tiempo(int t) {
         while (it != mjob.end()) {
             if ((*it).second.consultar_tiempo() <= t) {
                 int id = (*it).second.consultar_ID();
-                q.push(id);
+                eliminar_job(id, it);
             }
-            else (*it).second.restar_tiempo(t);          
-            ++it;
-        }
-        while (not q.empty()) {
-            eliminar_job(q.front());
-            q.pop();
+            else {
+                (*it).second.restar_tiempo(t);          
+                ++it;
+            }
         }
     }
 }
