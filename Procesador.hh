@@ -79,7 +79,7 @@ public:
         \pre El p.i. (P) está inicializado, t > 0
         \post El p.i. contiene los procesos con T - t > 0, 
         en caso que los procesos son eliminados T - t <= 0 los procesos son eliminados
-        \coste Lineal (todo el mapa y toda la cola)
+        \coste Lineal (todo el mapa)
     */
     void avanzar_tiempo(int t);
     
@@ -94,8 +94,10 @@ public:
 
     /** @brief Elimina un proceso del procesador 
      
-        \pre Existe un proceso en el p.i. con ID = id
+        \pre Existe un proceso en el p.i. con ID = id,
+        it puede estar referenciando a un valor o no
         \post El p.i. contiene sus procesos originales menos el proceso con ID = id
+        y it apunta al siguiente valor de el elemento borrado
         \coste Logarítmico (dos .erase de un map)
     */
     void eliminar_job(int id, map <int,Proceso>::iterator& it);
