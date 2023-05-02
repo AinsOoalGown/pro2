@@ -8,12 +8,12 @@ Prioridad::Prioridad() {
     proc_env = proc_rechazados = 0;
 }
 
-Prioridad::Prioridad(string id_pri) {
+Prioridad::Prioridad(const string& id_pri) {
     id_prior = id_pri;
     proc_env = proc_rechazados = 0;
 }
 
-void Prioridad::add_job(Proceso p) {
+void Prioridad::add_job(const Proceso& p) {
     antique.push(p.consultar_ID());
     mjob.insert(make_pair(p.consultar_ID(),p));
 }

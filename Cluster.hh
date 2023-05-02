@@ -62,12 +62,12 @@ public:
 
     /** @brief Añade un proceso en un procesador
      
-      \pre no existe p en el procesador con iD = id, 
-      la memoria de p <= memoria contigua más grande del procesador
-      \post El resultado es el procesador con ID = id con los procesos originales más p 
-      \coste Lineal (consultar coste de add_job() de la clase Procesador)
+      \pre no existe p en el procesador con ID = id
+      \post El resultado es el procesador con ID = id con los procesos originales más p si added = true,
+      en caso contrario devuelve added = false 
+      \coste Logarítmico sobre coste lineal (consultar coste de add_job() de la clase Procesador)
     */
-    void add_job_prc(string id, Proceso p);
+    void add_job_prc(const string& id, Proceso& p, bool& added);
 
     /** @brief Elimina un proceso del procesador 
      
@@ -75,7 +75,7 @@ public:
         \post El procesador con ID = idprc contiene sus procesos originales menos el proceso con ID = idjob 
         \coste Logarítmico (consultar coste de eliminar_job() de la clase Procesador)
     */
-    void eliminar_job_prc(string idprc, int idjob);
+    void eliminar_job_prc(const string& idprc, int idjob);
 
     /** @brief Avanza el tiempo del cluster
      
@@ -91,7 +91,7 @@ public:
       \post El resultado es el p.i. más c en la posición del procesador con ID = id
       \coste *No implementada* 
   */
-    void añadir_cluster(const Cluster& c, string id);
+    void añadir_cluster(const Cluster& c, const string& id);
 
     /** @brief Compacta todos los procesadores del clúster 
      
@@ -109,7 +109,7 @@ public:
       \post El resultado indica si existe el procesador con ID = id en el p.i.
       \coste Logarítmico
   */
-    bool existe_prc(string id) const; 
+    bool existe_prc(const string& id) const; 
 
     /** @brief Consultora de un procesador 
 
@@ -117,7 +117,7 @@ public:
       \post El resultado es el procesador con ID = id que contiene el p.i.
       \coste Logarítmico
   */
-    Procesador consultar_prc(string id) const;
+    Procesador consultar_prc(const string& id) const;
 
     /** @brief Consultora de la existencia de un procesador auxiliar apartir de otro procesador
 
@@ -125,7 +125,7 @@ public:
       \post El resultado indica si en el procesador con ID = id del p.i. existe un procesador auxiliar
       \coste *No implementado*
   */
-      bool existe_aux(string id) const;
+      bool existe_aux(const string& id) const;
 
     //Lectura y escritura
 
@@ -162,7 +162,7 @@ public:
       standard de salida. 
       \coste Lineal respecto respecto al número de procesos del procesador
     */
-    void escribir_prc(string id) const; //escribe los procesos del procesador con ID=id
+    void escribir_prc(const string& id) const; //escribe los procesos del procesador con ID=id
     
 };
 #endif

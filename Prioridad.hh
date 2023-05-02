@@ -56,7 +56,7 @@ public:
       un conjunto de procesos vacío y los atributos de tipo entero a 0.
       \coste Constante
   */
-    Prioridad(string id_prior);
+    Prioridad(const string& id_pri);
 
     //Modificadoras
 
@@ -66,7 +66,7 @@ public:
       \post El resultado es el p.i. más un proceso p
       \coste Logarítmico
   */
-    void add_job(Proceso p);
+    void add_job(const Proceso& p);
 
     //Consultoras
 

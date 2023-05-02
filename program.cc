@@ -84,10 +84,10 @@ int main() {
             p.leer();
             cout << '#' << comando << ' ' << id << ' ' << p.consultar_ID() << endl;
             if (c.existe_prc(id)) {
-                if (not c.consultar_prc(id).existe_job(p.consultar_ID())) {
-                    if (p.consultar_MEM() <= c.consultar_prc(id).consultar_MEM_contigua()) 
-                    c.add_job_prc(id, p);         
-                    else cout << "error: no cabe proceso" << endl;
+                if (not c.consultar_prc(id).existe_job(p.consultar_ID())) { 
+                    bool added = false;
+                    c.add_job_prc(id, p, added);
+                    if (not added) cout << "error: no cabe proceso" << endl;
                 }
                 else cout << "error: ya existe proceso" << endl;
             }
