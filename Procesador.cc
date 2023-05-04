@@ -5,14 +5,12 @@
 #include "Procesador.hh"
 
 Procesador::Procesador() {
-    mem = 0;
     id_mem.second = 0;
 }
 
 Procesador::Procesador(const string& s, int m) {
     id_mem.first = s;
     id_mem.second = m;
-    mem = 0;
 }
 
 int Procesador::search_mem_stack (int memo, int mem_max, const map <int, pair<int, int> >& mem) {
@@ -70,7 +68,6 @@ void Procesador::add_job(Proceso& p, bool& added) {
     if (ind == -1 or id_mem.second < memo) added = false;
     else {
         added = true;
-        mem += p.consultar_MEM();
         pair <int, int> par (p.consultar_MEM(), p.consultar_ID());
         mmem.insert(make_pair(ind, par));
         p.add_indice(ind);
@@ -80,7 +77,6 @@ void Procesador::add_job(Proceso& p, bool& added) {
 
 void Procesador::eliminar_job(int id, map <int,Proceso>::iterator& it) {
     if (id != -1) it = mjob.find(id);
-    mem -= it->second.consultar_MEM();
     int ind = it->second.consultar_ind();
     it = mjob.erase(it);
     mmem.erase(mmem.find(ind));
