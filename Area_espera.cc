@@ -55,14 +55,14 @@ void Area_espera::leer() {
 
 void Area_espera::escribir() const {
     for (map <string, Prioridad>::const_iterator it = mprior.begin(); it != mprior.end(); ++it) {
-        cout << (*it).first << endl;    
-        escribir_prior((*it).first);
+        cout << it->first << endl;    
+        escribir_prior("*", it);
     }
 
 }
 
-void Area_espera::escribir_prior(const string& id_prior) const {
-    Prioridad p = mprior.at(id_prior);
-    if (p.en_espera()) p.escribir_job(); 
-    p.escribir_env_rech();
+void Area_espera::escribir_prior(const string& id_prior, map <string, Prioridad>::const_iterator& it) const {
+    if (id_prior != "*") it = mprior.find(id_prior);
+    if (it->second.en_espera()) it->second.escribir_job(); 
+    it->second.escribir_env_rech();
 }

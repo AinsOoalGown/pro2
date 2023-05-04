@@ -79,7 +79,7 @@ public:
         \pre El p.i. (P) está inicializado, t > 0
         \post El p.i. contiene los procesos con T - t > 0, 
         en caso que los procesos son eliminados T - t <= 0 los procesos son eliminados
-        \coste Lineal (todo el mapa)
+        \coste Lineal (todo el mapa)  
     */
     void avanzar_tiempo(int t);
     

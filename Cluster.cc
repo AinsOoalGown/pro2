@@ -21,7 +21,7 @@ void Cluster::eliminar_job_prc(const string& idprc, int idjob) {
 void Cluster::avanzar_tiempo_prc(int t) {
     map <string, Procesador>::iterator it;
     for (it = mprc.begin(); it != mprc.end(); ++it) {
-        (*it).second.avanzar_tiempo(t);
+        it->second.avanzar_tiempo(t);
     }
 }
 
@@ -89,11 +89,12 @@ void Cluster::escribir_est() const {
 
 void Cluster::escribir_todos() const {
     for (map <string,Procesador>::const_iterator it = mprc.begin(); it != mprc.end(); ++it) {
-        cout << (*it).first << endl;
-        escribir_prc((*it).first);
+        cout << it->first << endl;
+        escribir_prc("*", it);
     }
 }
 
- void Cluster::escribir_prc(const string& id) const { 
-    if (mprc.at(id).en_curso()) mprc.at(id).escribir();
+ void Cluster::escribir_prc(const string& id, map<string,Procesador>::const_iterator& it) const { 
+    if (id != "*") it = mprc.find(id);
+    if (it->second.en_curso()) it->second.escribir();
  }

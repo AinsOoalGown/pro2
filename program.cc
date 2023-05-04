@@ -131,7 +131,8 @@ int main() {
             string id_prior;
             cin >> id_prior;
             cout << '#' << comando << ' ' << id_prior << endl;
-            if (ae.existe_prior(id_prior)) ae.escribir_prior(id_prior);
+            map <string, Prioridad>::const_iterator it;
+            if (ae.existe_prior(id_prior)) ae.escribir_prior(id_prior, it);
             else cout << "error: no existe prioridad" << endl;
         }
 
@@ -143,7 +144,8 @@ int main() {
             string id;
             cin >> id;
             cout << '#' << comando << ' ' << id << endl;
-            if (c.existe_prc(id)) c.escribir_prc(id);     
+            map <string,Procesador>::const_iterator it;
+            if (c.existe_prc(id)) c.escribir_prc(id, it);     
             else cout << "error: no existe procesador" << endl;
         }
         
