@@ -35,10 +35,7 @@ private:
       
       key = index, value = pair; first = space; second = id
      */
-    map <int, pair<int, int> > mmem; //key = index, value = pair; first = space; second = id
-    
-    /** @brief Entero de la memoria restante, mem <= mem_max */
-    int mem; 
+    map <int, pair<int, int> > mmem; //key = index, value = pair; first = space; second = id 
 
     /** @brief Busca el índice de memoria con espacio contiguo más ajustado, si existe
      
