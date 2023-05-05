@@ -135,7 +135,7 @@ public:
       \coste Lineal respecto al número de procesos de la prioridad escrita,
       más logarítmico (búsqueda en el mapa)
     */
-    void escribir_prior(const string& id_prior) const; //escribe todos los procesos pendeintes con esta id_prior
+    void escribir_prior(const string& id_prior,map <string, Prioridad>::const_iterator& it) const; //escribe todos los procesos pendeintes con esta id_prior
 
 };
 #endif

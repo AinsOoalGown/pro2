@@ -25,6 +25,8 @@ private:
     /** @brief Tiempo de ejecución restante de el proceso */
     int t_ejec;
 
+    pair<int, int> hollow; //hueco anterior y hueco posterior
+
     /** @brief Pair de enteros con el índice de memoria y memoria ocupada del proceso
      
       first = índice de la posición que ocupa en el memoria, second = memoria que ocupa
@@ -45,6 +47,12 @@ public:
 
     //Modificadoras
 
+    void mod_hollow2 (int h);
+
+    void mod_hollow1 (int h);
+
+    void add_hollow (int hollow1, int hollow2);
+
     /** @brief Añade el índice de la posición que ocupa en memoria 
      
       \pre <em>cierto</em>
@@ -62,6 +70,8 @@ public:
     void restar_tiempo(int t);
 
     //Consultoras
+
+    pair<int,int> consultar_hollow() const;
 
     /** @brief Consultora del id del proceso
         \pre <em>cierto</em>

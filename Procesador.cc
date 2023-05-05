@@ -5,84 +5,109 @@
 #include "Procesador.hh"
 
 Procesador::Procesador() {
-    mem = 0;
     id_mem.second = 0;
 }
 
 Procesador::Procesador(const string& s, int m) {
     id_mem.first = s;
     id_mem.second = m;
-    mem = 0;
 }
 
-int Procesador::search_mem_stack (int memo, int mem_max, const map <int, pair<int, int> >& mem) {
-    map<int,pair<int, int> >::const_iterator it = mem.begin();
-    if ((*it).first == memo) return 0;
-    //Caso 1: hay un exactamente un proceso
-    if (mem.size() == 1) {
-        int size = (*it).first + (*it).second.first;
-        if ((*it).first == 0) {
-            if (mem_max - size < memo) return -1;
-            return (*it).second.first;
-        }
-        if ((*it).first < memo) {
-            if (size == mem_max) return -1;
-            if (mem_max - size < memo) return -1;
-            return size;
-        }
-        return 0;
+void Procesador::update_mem (const Proceso& p, map <int, set<int>>& mem, map<int, Proceso>& mp) {   //hay minimo 2 procesos
+    pair <int,int> pr = p.consultar_hollow();
+    map<int, Proceso>::iterator it = mp.find(p.consultar_ind());
+    //gestion del espacio vacio del PROCESO ANTERIOR a este proceso
+    if (pr.first != p.consultar_ind()) {   //hay un proceso anterior a este
+        --it;
+        pair<int,int> pr2 = it->second.consultar_hollow();
+        it->second.mod_hollow2(pr2.second + p.consultar_MEM() + pr.second);
+        ++it;
     }
-    //Caso 2: hay dos o más procesos
-    else {
-        int a, b, min_size;
-        int ind = -1;
-        if (memo < (*it).first) {
-            min_size = (*it).first;
-            ind = 0;
-        }
-        else min_size = mem_max;
-        b = a = 0;
-        while (it != mem.end()) {
-            a = (*it).first + (*it).second.first; //indice + espacio
-            ++it;
-            if (it != mem.end()) {
-                b = (*it).first; //indice sig. elem.
-                if (memo == b - a) return a;
-                else if (b - a < min_size and b - a > memo) {
-                    min_size = b - a;
-                    ind = a;
-                } 
-            }
-            else if (mem_max - a >= memo) {
-                if (mem_max - a == memo or mem_max - a < min_size) return a;
-            }           
-        }
-        return ind;
+    //gestion del espacio vacio del PROCESO POSTERIOR a este proceso
+    ++it;
+    if (it != mp.end()) {   //hay un proceso posterior a este
+        pair<int,int> pr2 = it->second.consultar_hollow();
+        it->second.mod_hollow1(pr2.first + p.consultar_MEM() + pr.first);
     }
+    //gestion del mapa del memoria por huecos vacios
+    //1.Crear hueco nuevo o añadir nuevo índice al hueco con mismo tamaño 
+    map<int,set<int>>::iterator it2 = mem.find(p.consultar_MEM() + pr.first + pr.second);
+    if (it2 == mem.end()) {     //no existe ese hueco
+        set<int> s;
+        s.insert(p.consultar_ind() - pr.first);
+        mem.insert(make_pair(p.consultar_MEM() + pr.first + pr.second, s));
+    }
+    else {  //existe el mismo hueco
+        mem[p.consultar_MEM() + pr.first + pr.second].insert(p.consultar_ind() - pr.first);     //añadimos nuevo indice al set
+    }
+    //2. Eliminar hueco derecho del proceso p 
+    if (pr.second != 0)  {
+        mem[pr.second].erase(p.consultar_ind() + p.consultar_MEM());
+        if (mem[pr.second].empty()) mem.erase(pr.second);
+    }
+    //3. Eliminar hueco izquierdo del proceso p
+    if (pr.first != 0) {
+        mem[pr.first].erase(p.consultar_ind() - pr.first);
+        if (mem[pr.first].empty()) mem.erase(pr.first);
+    }
+       
 }
 
-void Procesador::add_job(Proceso& p, bool& added) {
-    int ind = 0;
+void Procesador::eliminar_job(int id, map <int,Proceso>::iterator& it) {
+    if (id != -1) it = mjob.find(id);
+    if (mjob.size() == 1) mmem.clear();     //solo quedaba 1 proceso 
+    else update_mem(it->second, mmem, mpos); //habian mínimo 2 procesos
+    mpos.erase(it->second.consultar_ind());
+    it = mjob.erase(it);
+}
+
+void Procesador::add_job(Proceso& p, bool& added) { 
+    int memo = p.consultar_MEM();   //memo = 3
     if (not mjob.empty()) {
-        int memo = p.consultar_MEM();
-        ind = search_mem_stack(memo, id_mem.second, mmem);   
+        map <int,set<int>>::iterator it1 = mmem.lower_bound(memo); //hueco igual o mayor a la memoria del proceso
+        if (it1 == mmem.end()) added = false;
+        else {
+            added = true;
+            set<int>::const_iterator it2 = it1->second.begin(); //indice más pequeño con hueco más ajustado
+            p.add_indice(*it2);
+            int hueco = it1->first - memo; //hueco = hueco anterior - memoria del proceso p.e: h.an. = 4, m = 2 -> h.ac. = 2
+            if (hueco > 0) {
+                it1 = mmem.find(hueco);
+                if (it1 == mmem.end()) {
+                    set<int> s;
+                    s.insert(*it2 + memo);      //ind del proceso + mem del proceso = ind del sig hueco
+                    mmem.insert(make_pair(hueco, s));
+                }
+                else it1->second.insert(*it2 + memo);   //ind del proceso + mem del proceso = ind del sig hueco  
+                p.add_hollow(0, hueco);
+            }
+            else p.add_hollow(0, 0);   //no se tiene que crear llave de mmem para hueco
+            pair <map <int,Proceso>::iterator,bool> pair_it = mpos.insert(make_pair(*it2, p)); 
+            map <int,Proceso>::iterator it = pair_it.first;
+            mjob.insert(make_pair(p.consultar_ID(), p));
+            int ind = *it2;
+            it1->second.erase(*it2);
+            if (it1->second.empty()) it1 = mmem.erase(it1);
+            if (ind != 0) {         //update del hollow2 del proceso "anterior" a este
+                --it;
+                it->second.mod_hollow2(0);
+                ++it;
+            }
+            ++it;
+            if (it != mpos.end()) it->second.mod_hollow1(hueco); //update del hollow1 del proceso "posterior" a este  
+        }
     }
-    if (ind == -1) added = false;
-    else {
+    else if (id_mem.second >= p.consultar_MEM()){       //max mem >= mem del proceso
         added = true;
-        mem += p.consultar_MEM();
-        pair <int, int> par (p.consultar_MEM(), p.consultar_ID());
-        mmem.insert(make_pair(ind, par));
-        p.add_indice(ind);
+        p.add_indice(0);
+        p.add_hollow(0, id_mem.second - memo);
+        mpos.insert(make_pair(0, p));
         mjob.insert(make_pair(p.consultar_ID(), p));
+        set<int> s;
+        s.insert(memo);
+        mmem.insert(make_pair(id_mem.second - memo, s));    //hueco = mem max - mem del proceso
     }
-}
-
-void Procesador::eliminar_job(int id) {
-    mem -= mjob[id].consultar_MEM();
-    int ind = mjob[id].consultar_ind();
-    mjob.erase(mjob.find(id));
-    mmem.erase(mmem.find(ind));
+    else added = false;
 }
 
 void Procesador::compactar_mem() {  //no se usa
@@ -92,18 +117,12 @@ void Procesador::compactar_mem() {  //no se usa
 void Procesador::avanzar_tiempo(int t) {
     if (not mjob.empty()) {
         map <int, Proceso>::iterator it = mjob.begin();
-        queue <int> q;
         while (it != mjob.end()) {
-            if ((*it).second.consultar_tiempo() <= t) {
-                int id = (*it).second.consultar_ID();
-                q.push(id);
+            if (it->second.consultar_tiempo() <= t) eliminar_job(-1, it);  
+            else {
+                it->second.restar_tiempo(t);          
+                ++it;
             }
-            else (*it).second.restar_tiempo(t);          
-            ++it;
-        }
-        while (not q.empty()) {
-            eliminar_job(q.front());
-            q.pop();
         }
     }
 }
@@ -127,9 +146,9 @@ void Procesador::leer() {   //no se usa
 }
 
 void Procesador::escribir() const {
-    map <int, pair <int,int> >::const_iterator it;
-    for (it = mmem.begin(); it != mmem.end(); ++it) {
-        cout << (*it).first << ' ';
-        mjob.at((*it).second.second).escribir();
+    map <int, Proceso>::const_iterator it;
+    for (it = mpos.begin(); it != mpos.end(); ++it) {
+        cout << it->first << ' ';
+        it->second.escribir();
     }
 }

@@ -162,7 +162,7 @@ public:
       standard de salida. 
       \coste Lineal respecto respecto al número de procesos del procesador
     */
-    void escribir_prc(const string& id) const; //escribe los procesos del procesador con ID=id
+    void escribir_prc(const string& id, map<string,Procesador>::const_iterator& it) const; //escribe los procesos del procesador con ID=id
     
 };
 #endif
