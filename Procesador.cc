@@ -29,7 +29,7 @@ void Procesador::update_mem (const Proceso& p, map <int, set<int>>& mem, map<int
         pair<int,int> pr2 = it->second.consultar_hollow();
         it->second.mod_hollow1(pr2.first + p.consultar_MEM() + pr.first);
     }
-    //gestion del mapa del memoria por huecos vacios
+    //gestion del mapa de memoria por huecos vacios
     //1.Crear hueco nuevo o añadir nuevo índice al hueco con mismo tamaño 
     map<int,set<int>>::iterator it2 = mem.find(p.consultar_MEM() + pr.first + pr.second);
     if (it2 == mem.end()) {     //no existe ese hueco
