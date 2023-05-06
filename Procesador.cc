@@ -6,18 +6,21 @@
 
 Procesador::Procesador() {
     id_mem.second = 0;
+    mmem.insert(make_pair(id_mem.second, set<int>{0}));
+    
 }
 
 Procesador::Procesador(const string& s, int m) {
     id_mem.first = s;
     id_mem.second = m;
+    mmem.insert(make_pair(id_mem.second, set<int>{0}));
 }
 
-void Procesador::update_mem (const Proceso& p, map <int, set<int>>& mem, map<int, Proceso>& mp) {   //hay minimo 2 procesos
+void Procesador::update_mem (const Proceso& p, map <int, set<int>>& mem, map<int, Proceso>& mp) { 
     pair <int,int> pr = p.consultar_hollow();
     map<int, Proceso>::iterator it = mp.find(p.consultar_ind());
     //gestion del espacio vacio del PROCESO ANTERIOR a este proceso
-    if (pr.first != p.consultar_ind()) {   //hay un proceso anterior a este
+    if (it != mp.begin()) {   //hay un proceso anterior a este
         --it;
         pair<int,int> pr2 = it->second.consultar_hollow();
         it->second.mod_hollow2(pr2.second + p.consultar_MEM() + pr.second);
@@ -31,15 +34,8 @@ void Procesador::update_mem (const Proceso& p, map <int, set<int>>& mem, map<int
     }
     //gestion del mapa de memoria por huecos vacios
     //1.Crear hueco nuevo o añadir nuevo índice al hueco con mismo tamaño 
-    map<int,set<int>>::iterator it2 = mem.find(p.consultar_MEM() + pr.first + pr.second);
-    if (it2 == mem.end()) {     //no existe ese hueco
-        set<int> s;
-        s.insert(p.consultar_ind() - pr.first);
-        mem.insert(make_pair(p.consultar_MEM() + pr.first + pr.second, s));
-    }
-    else {  //existe el mismo hueco
-        mem[p.consultar_MEM() + pr.first + pr.second].insert(p.consultar_ind() - pr.first);     //añadimos nuevo indice al set
-    }
+    mem[p.consultar_MEM() + pr.first + pr.second].insert(p.consultar_ind() - pr.first);
+
     //2. Eliminar hueco derecho del proceso p 
     if (pr.second != 0)  {
         mem[pr.second].erase(p.consultar_ind() + p.consultar_MEM());
@@ -49,14 +45,12 @@ void Procesador::update_mem (const Proceso& p, map <int, set<int>>& mem, map<int
     if (pr.first != 0) {
         mem[pr.first].erase(p.consultar_ind() - pr.first);
         if (mem[pr.first].empty()) mem.erase(pr.first);
-    }
-       
+    }    
 }
 
 void Procesador::eliminar_job(int id, map <int,Proceso>::iterator& it) {
-    if (id != -1) it = mpos.find(mjob[id].consultar_ind());
-    if (mjob.size() == 1) mmem.clear();     //solo quedaba 1 proceso 
-    else update_mem(it->second, mmem, mpos); //habian mínimo 2 procesos  MAL estas pasando el proceso de mjob (no tiene actualizado los hollows)
+    if (id != -1) it = mpos.find(mjob[id]);
+    update_mem(it->second, mmem, mpos);
     mjob.erase(it->second.consultar_ID());
     it = mpos.erase(it);
 }
@@ -74,58 +68,36 @@ void Procesador::avanzar_tiempo(int t) {
     }   
 }
 
-void Procesador::add_job(Proceso& p, bool& added) { 
+void Procesador::add_job(Proceso& p) { 
     int memo = p.consultar_MEM();
-    if (not mjob.empty()) {
-        map <int,set<int>>::iterator it1 = mmem.lower_bound(memo); //hueco igual o mayor a la memoria del proceso
-        if (it1 == mmem.end()) added = false;       
-        else {
-            added = true;
-            set<int>::const_iterator it2 = it1->second.begin(); //indice más pequeño con hueco más ajustado 
-            p.add_indice(*it2);
-            int hueco = it1->first - memo; //hueco = hueco anterior - memoria del proceso p.e: h.an. = 4, m = 2 -> h.ac. = 2
-            if (hueco > 0) {
-                map <int,set<int>>::iterator it3 = mmem.find(hueco);
-                if (it3 == mmem.end()) {
-                    set<int> s;
-                    s.insert(*it2 + memo);      //ind del proceso + mem del proceso = ind del sig hueco
-                    mmem.insert(make_pair(hueco, s));
-                }
-                else it3->second.insert(*it2 + memo);   //ind del proceso + mem del proceso = ind del sig hueco
-                p.add_hollow(0, hueco);
-            }
-            else p.add_hollow(0, 0);   //no se tiene que crear llave de mmem para hueco
-            mpos.insert(make_pair(*it2, p));
-            mjob.insert(make_pair(p.consultar_ID(), p));
-            int ind = *it2;
-            //Actualizar mapa de memoria
-            map <int,Proceso>::iterator it = mpos.find(*it2);
-            it1->second.erase(*it2); 
-            if (it1->second.empty()) it1 = mmem.erase(it1);
-            if (ind != 0) {         //update del hollow2 del proceso "anterior" a este
-                --it;
-                it->second.mod_hollow2(0);
-                ++it;
-            }
+    map <int,set<int>>::iterator it1 = mmem.lower_bound(memo); //hueco igual o mayor a la memoria del proceso
+    if (it1 == mmem.end()) cout << "error: no cabe proceso" << endl; 
+    else {
+        set<int>::const_iterator it2 = it1->second.begin(); //indice más pequeño con hueco más ajustado 
+        p.add_indice(*it2);
+        int hueco = it1->first - memo; //hueco = hueco anterior - memoria del proceso p.e: h.an. = 4, m = 2 -> h.ac. = 2
+        if (hueco > 0) mmem[hueco].insert(*it2 + memo);     
+        p.add_hollow(0, hueco);  
+        mpos.insert(make_pair(*it2, p));
+        mjob.insert(make_pair(p.consultar_ID(), *it2));
+        int ind = *it2;
+        //Actualizar mapa de memoria
+        map <int, Proceso>::iterator it = mpos.find(*it2);
+        it1->second.erase(*it2); //
+        if (it1->second.empty()) it1 = mmem.erase(it1); //
+        if (ind != 0) {         //update del hollow2 del proceso "anterior" a este
+            --it;
+            it->second.mod_hollow2(0);
             ++it;
-            if (it != mpos.end()) it->second.mod_hollow1(hueco); //update del hollow1 del proceso "posterior" a este  
         }
+        ++it;
+        if (it != mpos.end()) it->second.mod_hollow1(hueco); //update del hollow1 del proceso "posterior" a este  
     }
-    else if (id_mem.second >= p.consultar_MEM()){       //max mem >= mem del proceso
-        added = true;
-        p.add_indice(0);
-        p.add_hollow(0, id_mem.second - memo);
-        mpos.insert(make_pair(0, p));
-        mjob.insert(make_pair(p.consultar_ID(), p));
-        set<int> s;
-        s.insert(memo);
-        mmem.insert(make_pair(id_mem.second - memo, s));    //hueco = mem max - mem del proceso
-    }
-    else added = false;
 }
 
+
 void Procesador::compactar_mem() {  //no se usa
-    mjob[78].escribir();
+    cout << mjob[78] << endl;
 }
 
 string Procesador::consultar_ID() const {

@@ -67,7 +67,7 @@ public:
       en caso contrario devuelve added = false 
       \coste Logarítmico sobre coste lineal (consultar coste de add_job() de la clase Procesador)
     */
-    void add_job_prc(const string& id, Proceso& p, bool& added);
+    void add_job_prc(const string& id, Proceso& p);
 
     /** @brief Elimina un proceso del procesador 
      

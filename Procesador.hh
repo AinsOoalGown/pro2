@@ -28,8 +28,8 @@ private:
     */
     pair <string, int> id_mem; //id + mem_max
 
-    /** @brief Mapa de procesos ordenado crecientemente por su id */
-    map <int, Proceso> mjob;
+    /** @brief Mapa de indices de cada proceso ordenado crecientemente por su id */
+    map <int, int> mjob;
 
     /** @brief Mapa del los índices de las posiciones de los procesos en la memoria
       
@@ -89,7 +89,7 @@ public:
         \post El p.i. contiene sus procesos originales más p 
         \coste Lineal (mirar coste de search_mem_stack())
     */
-    void add_job(Proceso& p, bool& added);
+    void add_job(Proceso& p);
 
     /** @brief Elimina un proceso del procesador 
      
