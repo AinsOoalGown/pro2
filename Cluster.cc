@@ -36,9 +36,8 @@ void Cluster::compactar() { //no se usa
 }
 
 bool Cluster::existe_prc(const string& id) const {
-    map <string,Procesador>::const_iterator it = mprc.find(id);
-    if (it == mprc.end()) return false;
-    return true;
+    return (mprc.find(id) != mprc.end());
+
 }
 
 Procesador Cluster::consultar_prc(const string& id) const {
