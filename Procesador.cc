@@ -16,11 +16,13 @@ Procesador::Procesador(const string& s, int m) {
     mmem.insert(make_pair(id_mem.second, set<int>{0}));
 }
 
-void Procesador::update_mem (const Proceso& p, map <int, set<int>>& mem, map<int, Proceso>& mp) { 
-    pair <int,int> pr = p.consultar_hollow();
-    map<int, Proceso>::iterator it = mp.find(p.consultar_ind());
+void Procesador::eliminar_job(int id, map <int,Proceso>::iterator& it) {
+    if (id != -1) it = mpos.find(mjob[id]);
+    mjob.erase(it->second.consultar_ID());
+    Proceso p = it->second;
+    pair <int,int> pr = it->second.consultar_hollow();
     //gestion del espacio vacio del PROCESO ANTERIOR a este proceso
-    if (it != mp.begin()) {   //hay un proceso anterior a este
+    if (it != mpos.begin()) {   //hay un proceso anterior a este
         --it;
         pair<int,int> pr2 = it->second.consultar_hollow();
         it->second.mod_hollow2(pr2.second + p.consultar_MEM() + pr.second);
@@ -28,31 +30,26 @@ void Procesador::update_mem (const Proceso& p, map <int, set<int>>& mem, map<int
     }
     //gestion del espacio vacio del PROCESO POSTERIOR a este proceso
     ++it;
-    if (it != mp.end()) {   //hay un proceso posterior a este
+    if (it != mpos.end()) {   //hay un proceso posterior a este
         pair<int,int> pr2 = it->second.consultar_hollow();
         it->second.mod_hollow1(pr2.first + p.consultar_MEM() + pr.first);
     }
+    --it;
+    it = mpos.erase(it);
     //gestion del mapa de memoria por huecos vacios
     //1.Crear hueco nuevo o añadir nuevo índice al hueco con mismo tamaño 
-    mem[p.consultar_MEM() + pr.first + pr.second].insert(p.consultar_ind() - pr.first);
+    mmem[p.consultar_MEM() + pr.first + pr.second].insert(p.consultar_ind() - pr.first);
 
     //2. Eliminar hueco derecho del proceso p 
     if (pr.second != 0)  {
-        mem[pr.second].erase(p.consultar_ind() + p.consultar_MEM());
-        if (mem[pr.second].empty()) mem.erase(pr.second);
+        mmem[pr.second].erase(p.consultar_ind() + p.consultar_MEM());
+        if (mmem[pr.second].empty()) mmem.erase(pr.second);
     }
     //3. Eliminar hueco izquierdo del proceso p
     if (pr.first != 0) {
-        mem[pr.first].erase(p.consultar_ind() - pr.first);
-        if (mem[pr.first].empty()) mem.erase(pr.first);
-    }    
-}
-
-void Procesador::eliminar_job(int id, map <int,Proceso>::iterator& it) {
-    if (id != -1) it = mpos.find(mjob[id]);
-    update_mem(it->second, mmem, mpos);
-    mjob.erase(it->second.consultar_ID());
-    it = mpos.erase(it);
+        mmem[pr.first].erase(p.consultar_ind() - pr.first);
+        if (mmem[pr.first].empty()) mmem.erase(pr.first);
+    } 
 }
 
 void Procesador::avanzar_tiempo(int t) {

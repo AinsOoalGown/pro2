@@ -39,17 +39,6 @@ private:
 
     map <int, Proceso> mpos; //key = ind del proceso, value = proceso
     
-    /** @brief Busca el índice de memoria con espacio contiguo más ajustado, si existe
-     
-        \pre Hay almenos un proceso activo, 0 < memo
-        \post Devuelve el índice de la posición con espacio libre 
-        más ajustado al tamaño del proceso (memo) en caso de que exista,
-        devuelve -1 si no
-        \coste Lineal (en el peor de los casos ha de recorrer todo el mapa)
-    */
-    static void update_mem(const Proceso& p, map <int, set<int>>& mem, map<int, Proceso>& mp);
-    
-
 public:
     //Constructoras
 
