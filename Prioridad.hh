@@ -7,7 +7,7 @@
 
 #include "Proceso.hh"
 #ifndef NO_DIAGRAM
-#include <queue>
+#include <list>
 #include <map>
 #endif 
 
@@ -21,10 +21,10 @@ private:
     /** @brief Cadena de caracteres que identifica a la prioridad */
     string id_prior;
 
-    /** @brief Cola de enteros correspondientes a los id de los procesos
+    /** @brief Lista de enteros correspondientes a los id de los procesos
      
       Ordenada por orden de antigüedad de entrada de los procesos*/
-    queue <int> antique;
+    list <int> antique;
 
     /** @brief Numero de procesos enviados (aceptados) al cluster */
     int proc_env;
@@ -96,12 +96,12 @@ public:
 
     //Lectura y escritura
 
-    /** @brief Operación de escritura de todos los procesos <em>PENDIENTES</em>
+    /** @brief Operación de escritura de todos los procesos pendientes
 
-      \pre Existe una almenos un proceso pendiente
+      \pre Existe almenos un proceso pendiente
       \post Se ha escrito todos los procesos pendientes por orden decreciente 
             de antigüedad en el canal standard de salida.
-      \coste Lineal (copia de la cola + bucle para todos los elementos de la cola) 
+      \coste Lineal (bucle para todos los elementos de la lista) 
     */
     void escribir_job() const;
 

@@ -9,18 +9,19 @@ Cluster::Cluster() {
 
 }
 
-void Cluster::add_job_prc(const string& id, Proceso& p, bool& added) {
-    mprc[id].add_job(p,added);
+void Cluster::add_job_prc(const string& id, Proceso& p) {
+    mprc[id].add_job(p);
 }
 
 void Cluster::eliminar_job_prc(const string& idprc, int idjob) {
-    mprc[idprc].eliminar_job(idjob);
+    map <int,Proceso>::iterator it;
+    mprc[idprc].eliminar_job(idjob, it);
 }
 
 void Cluster::avanzar_tiempo_prc(int t) {
     map <string, Procesador>::iterator it;
     for (it = mprc.begin(); it != mprc.end(); ++it) {
-        (*it).second.avanzar_tiempo(t);
+        it->second.avanzar_tiempo(t);
     }
 }
 
@@ -35,9 +36,8 @@ void Cluster::compactar() { //no se usa
 }
 
 bool Cluster::existe_prc(const string& id) const {
-    map <string,Procesador>::const_iterator it = mprc.find(id);
-    if (it == mprc.end()) return false;
-    return true;
+    return (mprc.find(id) != mprc.end());
+
 }
 
 Procesador Cluster::consultar_prc(const string& id) const {
@@ -88,11 +88,12 @@ void Cluster::escribir_est() const {
 
 void Cluster::escribir_todos() const {
     for (map <string,Procesador>::const_iterator it = mprc.begin(); it != mprc.end(); ++it) {
-        cout << (*it).first << endl;
-        escribir_prc((*it).first);
+        cout << it->first << endl;
+        escribir_prc("*", it);
     }
 }
 
- void Cluster::escribir_prc(const string& id) const { 
-    if (mprc.at(id).en_curso()) mprc.at(id).escribir();
+ void Cluster::escribir_prc(const string& id, map<string,Procesador>::const_iterator& it) const { 
+    if (id != "*") it = mprc.find(id);
+    if (it->second.en_curso()) it->second.escribir();
  }

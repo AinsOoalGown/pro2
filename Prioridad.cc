@@ -14,7 +14,8 @@ Prioridad::Prioridad(const string& id_pri) {
 }
 
 void Prioridad::add_job(const Proceso& p) {
-    antique.push(p.consultar_ID());
+    list<int>::iterator it = antique.end();
+    antique.insert(it ,p.consultar_ID());
     mjob.insert(make_pair(p.consultar_ID(),p));
 }
 
@@ -33,10 +34,10 @@ bool Prioridad::en_espera() const {
 }
 
 void Prioridad::escribir_job() const {
-    queue<int> c = antique;
-    while (not c.empty()) {
-        mjob.at(c.front()).escribir();
-        c.pop();
+    list<int>::const_iterator it = antique.begin();
+    while (it != antique.end()) { 
+        mjob.at((*it)).escribir();
+        ++it;
     }
 }
 

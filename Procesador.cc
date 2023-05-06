@@ -5,107 +5,68 @@
 #include "Procesador.hh"
 
 Procesador::Procesador() {
-    mem = 0;
-    id_mem.second = 0;
+    
 }
 
 Procesador::Procesador(const string& s, int m) {
     id_mem.first = s;
     id_mem.second = m;
-    mem = 0;
+    mmem[id_mem.second].insert(0);
 }
 
-int Procesador::search_mem_stack (int memo, int mem_max, const map <int, pair<int, int> >& mem) {
-    map<int,pair<int, int> >::const_iterator it = mem.begin();
-    if ((*it).first == memo) return 0;
-    //Caso 1: hay un exactamente un proceso
-    if (mem.size() == 1) {
-        int size = (*it).first + (*it).second.first;
-        if ((*it).first == 0) {
-            if (mem_max - size < memo) return -1;
-            return (*it).second.first;
-        }
-        if ((*it).first < memo) {
-            if (size == mem_max) return -1;
-            if (mem_max - size < memo) return -1;
-            return size;
-        }
-        return 0;
-    }
-    //Caso 2: hay dos o más procesos
+void Procesador::eliminar_job(int id, map <int,Proceso>::iterator& it) {
+    if (id != -1) it = mpos.find(mjob[id]);
+    mjob.erase(it->second.consultar_ID());
+    it = mpos.erase(it);
+    mmem.clear();
+    if (mjob.empty()) mmem[id_mem.second].insert(0);
     else {
-        int a, b, min_size;
-        int ind = -1;
-        if (memo < (*it).first) {
-            min_size = (*it).first;
-            ind = 0;
+        map<int,Proceso>::iterator it1 = mpos.begin();
+        if (it1->first != 0) mmem[it1->first].insert(0);
+        int ind;
+        while (it1 != mpos.end()) {
+            ind = it1->first + it1->second.consultar_MEM();
+            ++it1;
+            if (it1 != mpos.end() and ind != it1->first) mmem[it1->first - ind].insert(ind);   
         }
-        else min_size = mem_max;
-        b = a = 0;
-        while (it != mem.end()) {
-            a = (*it).first + (*it).second.first; //indice + espacio
-            ++it;
-            if (it != mem.end()) {
-                b = (*it).first; //indice sig. elem.
-                if (memo == b - a) return a;
-                else if (b - a < min_size and b - a > memo) {
-                    min_size = b - a;
-                    ind = a;
-                } 
-            }
-            else if (mem_max - a >= memo) {
-                if (mem_max - a == memo or mem_max - a < min_size) return a;
-            }           
-        }
-        return ind;
-    }
-}
+        if (ind != id_mem.second) mmem[id_mem.second - ind].insert(ind);
 
-void Procesador::add_job(Proceso& p, bool& added) {
-    int ind = 0;
-    if (not mjob.empty()) {
-        int memo = p.consultar_MEM();
-        ind = search_mem_stack(memo, id_mem.second, mmem);   
     }
-    if (ind == -1) added = false;
-    else {
-        added = true;
-        mem += p.consultar_MEM();
-        pair <int, int> par (p.consultar_MEM(), p.consultar_ID());
-        mmem.insert(make_pair(ind, par));
-        p.add_indice(ind);
-        mjob.insert(make_pair(p.consultar_ID(), p));
-    }
-}
-
-void Procesador::eliminar_job(int id) {
-    mem -= mjob[id].consultar_MEM();
-    int ind = mjob[id].consultar_ind();
-    mjob.erase(mjob.find(id));
-    mmem.erase(mmem.find(ind));
-}
-
-void Procesador::compactar_mem() {  //no se usa
-    mjob[78].escribir();
 }
 
 void Procesador::avanzar_tiempo(int t) {
     if (not mjob.empty()) {
-        map <int, Proceso>::iterator it = mjob.begin();
-        queue <int> q;
-        while (it != mjob.end()) {
-            if ((*it).second.consultar_tiempo() <= t) {
-                int id = (*it).second.consultar_ID();
-                q.push(id);
+        map <int, Proceso>::iterator it = mpos.begin();
+        while (it != mpos.end()) {
+            if (it->second.consultar_tiempo() <= t) eliminar_job(-1, it);  
+            else {
+                it->second.restar_tiempo(t);         
+                ++it;
             }
-            else (*it).second.restar_tiempo(t);          
-            ++it;
         }
-        while (not q.empty()) {
-            eliminar_job(q.front());
-            q.pop();
-        }
+    }   
+}
+
+void Procesador::add_job(const Proceso& p) { 
+    int memo = p.consultar_MEM();
+    map <int,set<int>>::iterator it1 = mmem.lower_bound(memo); //hueco igual o mayor a la memoria del proceso
+    if (it1 == mmem.end()) cout << "error: no cabe proceso" << endl; 
+    else {
+        set<int>::const_iterator it2 = it1->second.begin(); //indice más pequeño con hueco más ajustado 
+        int hueco = it1->first - memo; //hueco = hueco anterior - memoria del proceso p.e: h.an. = 4, m = 2 -> h.ac. = 2
+        if (hueco > 0) mmem[hueco].insert(*it2 + memo);     
+        mpos.insert(make_pair(*it2, p));
+        mjob.insert(make_pair(p.consultar_ID(), *it2));
+
+        //Actualizar mapa de memoria
+        it1->second.erase(*it2);
+        if (it1->second.empty()) it1 = mmem.erase(it1);   
     }
+}
+
+
+void Procesador::compactar_mem() {  //no se usa
+    cout << mjob[78] << endl;
 }
 
 string Procesador::consultar_ID() const {
@@ -113,9 +74,7 @@ string Procesador::consultar_ID() const {
 }
 
 bool Procesador::existe_job(int id) const {
-    map <int, Proceso>::const_iterator it = mjob.find(id); 
-    if (it == mjob.end()) return false;
-    return true;
+    return (mjob.find(id) != mjob.end());
 }
 
 bool Procesador::en_curso() const {
@@ -127,9 +86,9 @@ void Procesador::leer() {   //no se usa
 }
 
 void Procesador::escribir() const {
-    map <int, pair <int,int> >::const_iterator it;
-    for (it = mmem.begin(); it != mmem.end(); ++it) {
-        cout << (*it).first << ' ';
-        mjob.at((*it).second.second).escribir();
+    map <int, Proceso>::const_iterator it;
+    for (it = mpos.begin(); it != mpos.end(); ++it) {
+        cout << it->first << ' ';
+        it->second.escribir();
     }
 }

@@ -10,6 +10,7 @@
 #include "Prioridad.hh"
 #ifndef NO_DIAGRAM
 #include <utility>
+#include <set>
 #include <map>
 #include <vector>
 #endif
@@ -27,29 +28,17 @@ private:
     */
     pair <string, int> id_mem; //id + mem_max
 
-    /** @brief Mapa de procesos ordenado crecientemente por su id */
-    map <int, Proceso> mjob;
+    /** @brief Mapa de indices de cada proceso ordenado crecientemente por su id */
+    map <int, int> mjob;
 
     /** @brief Mapa del los índices de las posiciones de los procesos en la memoria
       
       key = index, value = pair; first = space; second = id
      */
-    map <int, pair<int, int> > mmem; //key = index, value = pair; first = space; second = id
-    
-    /** @brief Entero de la memoria restante, mem <= mem_max */
-    int mem; 
+    map <int, set<int> > mmem; //key = hueco de espacio, value = indices de los huecos libres de memoria
 
-    /** @brief Busca el índice de memoria con espacio contiguo más ajustado, si existe
-     
-        \pre Hay almenos un proceso activo, 0 < memo
-        \post Devuelve el índice de la posición con espacio libre 
-        más ajustado al tamaño del proceso (memo) en caso de que exista,
-        devuelve -1 si no
-        \coste Lineal (en el peor de los casos ha de recorrer todo el mapa)
-    */
-    static int search_mem_stack(int memo, int mem_max, const map <int, pair<int, int> >& mem);
+    map <int, Proceso> mpos; //key = ind del proceso, value = proceso
     
-
 public:
     //Constructoras
 
@@ -78,7 +67,7 @@ public:
         \pre El p.i. (P) está inicializado, t > 0
         \post El p.i. contiene los procesos con T - t > 0, 
         en caso que los procesos son eliminados T - t <= 0 los procesos son eliminados
-        \coste Lineal (todo el mapa y toda la cola)
+        \coste Lineal (todo el mapa)  
     */
     void avanzar_tiempo(int t);
     
@@ -89,15 +78,17 @@ public:
         \post El p.i. contiene sus procesos originales más p 
         \coste Lineal (mirar coste de search_mem_stack())
     */
-    void add_job(Proceso& p, bool& added);
+    void add_job(const Proceso& p);
 
     /** @brief Elimina un proceso del procesador 
      
-        \pre Existe un proceso en el p.i. con ID = id
+        \pre Existe un proceso en el p.i. con ID = id,
+        it puede estar referenciando a un valor o no
         \post El p.i. contiene sus procesos originales menos el proceso con ID = id
+        y it apunta al siguiente valor de el elemento borrado
         \coste Logarítmico (dos .erase de un map)
     */
-    void eliminar_job(int id);
+    void eliminar_job(int id, map <int,Proceso>::iterator& it);
 
     /** @brief Compacta la memoria del procesador 
      
