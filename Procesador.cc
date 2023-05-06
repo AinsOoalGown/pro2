@@ -56,37 +56,38 @@ void Procesador::update_mem (const Proceso& p, map <int, set<int>>& mem, map<int
 void Procesador::eliminar_job(int id, map <int,Proceso>::iterator& it) {
     if (id != -1) it = mjob.find(id);
     if (mjob.size() == 1) mmem.clear();     //solo quedaba 1 proceso 
-    else update_mem(it->second, mmem, mpos); //habian mínimo 2 procesos
+    else update_mem(mpos[it->second.consultar_ind()], mmem, mpos); //habian mínimo 2 procesos  MAL estas pasando el proceso de mjob (no tiene actualizado los hollows)
     mpos.erase(it->second.consultar_ind());
     it = mjob.erase(it);
 }
 
 void Procesador::add_job(Proceso& p, bool& added) { 
-    int memo = p.consultar_MEM();   //memo = 3
+    int memo = p.consultar_MEM();
     if (not mjob.empty()) {
         map <int,set<int>>::iterator it1 = mmem.lower_bound(memo); //hueco igual o mayor a la memoria del proceso
-        if (it1 == mmem.end()) added = false;
+        if (it1 == mmem.end()) added = false;       
         else {
             added = true;
-            set<int>::const_iterator it2 = it1->second.begin(); //indice más pequeño con hueco más ajustado
+            set<int>::const_iterator it2 = it1->second.begin(); //indice más pequeño con hueco más ajustado 
             p.add_indice(*it2);
             int hueco = it1->first - memo; //hueco = hueco anterior - memoria del proceso p.e: h.an. = 4, m = 2 -> h.ac. = 2
             if (hueco > 0) {
-                it1 = mmem.find(hueco);
-                if (it1 == mmem.end()) {
+                map <int,set<int>>::iterator it3 = mmem.find(hueco);
+                if (it3 == mmem.end()) {
                     set<int> s;
                     s.insert(*it2 + memo);      //ind del proceso + mem del proceso = ind del sig hueco
                     mmem.insert(make_pair(hueco, s));
                 }
-                else it1->second.insert(*it2 + memo);   //ind del proceso + mem del proceso = ind del sig hueco  
+                else it3->second.insert(*it2 + memo);   //ind del proceso + mem del proceso = ind del sig hueco
                 p.add_hollow(0, hueco);
             }
             else p.add_hollow(0, 0);   //no se tiene que crear llave de mmem para hueco
-            pair <map <int,Proceso>::iterator,bool> pair_it = mpos.insert(make_pair(*it2, p)); 
-            map <int,Proceso>::iterator it = pair_it.first;
+            mpos.insert(make_pair(*it2, p));
+            map <int,Proceso>::iterator it = mpos.find(*it2);
             mjob.insert(make_pair(p.consultar_ID(), p));
             int ind = *it2;
-            it1->second.erase(*it2);
+            //Actualizar mapa de memoria
+            it1->second.erase(*it2); 
             if (it1->second.empty()) it1 = mmem.erase(it1);
             if (ind != 0) {         //update del hollow2 del proceso "anterior" a este
                 --it;
@@ -120,11 +121,11 @@ void Procesador::avanzar_tiempo(int t) {
         while (it != mjob.end()) {
             if (it->second.consultar_tiempo() <= t) eliminar_job(-1, it);  
             else {
-                it->second.restar_tiempo(t);          
+                it->second.restar_tiempo(t);         
                 ++it;
             }
         }
-    }
+    }   
 }
 
 string Procesador::consultar_ID() const {
@@ -149,6 +150,6 @@ void Procesador::escribir() const {
     map <int, Proceso>::const_iterator it;
     for (it = mpos.begin(); it != mpos.end(); ++it) {
         cout << it->first << ' ';
-        it->second.escribir();
+        mjob.at(it->second.consultar_ID()).escribir();
     }
 }
