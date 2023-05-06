@@ -9,7 +9,6 @@
 #include "Proceso.hh"
 #include "Prioridad.hh"
 #ifndef NO_DIAGRAM
-#include<queue>
 #include <utility>
 #include <set>
 #include <map>

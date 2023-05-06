@@ -54,11 +54,24 @@ void Procesador::update_mem (const Proceso& p, map <int, set<int>>& mem, map<int
 }
 
 void Procesador::eliminar_job(int id, map <int,Proceso>::iterator& it) {
-    if (id != -1) it = mjob.find(id);
+    if (id != -1) it = mpos.find(mjob[id].consultar_ind());
     if (mjob.size() == 1) mmem.clear();     //solo quedaba 1 proceso 
-    else update_mem(mpos[it->second.consultar_ind()], mmem, mpos); //habian mínimo 2 procesos  MAL estas pasando el proceso de mjob (no tiene actualizado los hollows)
-    mpos.erase(it->second.consultar_ind());
-    it = mjob.erase(it);
+    else update_mem(it->second, mmem, mpos); //habian mínimo 2 procesos  MAL estas pasando el proceso de mjob (no tiene actualizado los hollows)
+    mjob.erase(it->second.consultar_ID());
+    it = mpos.erase(it);
+}
+
+void Procesador::avanzar_tiempo(int t) {
+    if (not mjob.empty()) {
+        map <int, Proceso>::iterator it = mpos.begin();
+        while (it != mpos.end()) {
+            if (it->second.consultar_tiempo() <= t) eliminar_job(-1, it);  
+            else {
+                it->second.restar_tiempo(t);         
+                ++it;
+            }
+        }
+    }   
 }
 
 void Procesador::add_job(Proceso& p, bool& added) { 
@@ -83,10 +96,10 @@ void Procesador::add_job(Proceso& p, bool& added) {
             }
             else p.add_hollow(0, 0);   //no se tiene que crear llave de mmem para hueco
             mpos.insert(make_pair(*it2, p));
-            map <int,Proceso>::iterator it = mpos.find(*it2);
             mjob.insert(make_pair(p.consultar_ID(), p));
             int ind = *it2;
             //Actualizar mapa de memoria
+            map <int,Proceso>::iterator it = mpos.find(*it2);
             it1->second.erase(*it2); 
             if (it1->second.empty()) it1 = mmem.erase(it1);
             if (ind != 0) {         //update del hollow2 del proceso "anterior" a este
@@ -115,27 +128,12 @@ void Procesador::compactar_mem() {  //no se usa
     mjob[78].escribir();
 }
 
-void Procesador::avanzar_tiempo(int t) {
-    if (not mjob.empty()) {
-        map <int, Proceso>::iterator it = mjob.begin();
-        while (it != mjob.end()) {
-            if (it->second.consultar_tiempo() <= t) eliminar_job(-1, it);  
-            else {
-                it->second.restar_tiempo(t);         
-                ++it;
-            }
-        }
-    }   
-}
-
 string Procesador::consultar_ID() const {
     return id_mem.first;
 }
 
 bool Procesador::existe_job(int id) const {
-    map <int, Proceso>::const_iterator it = mjob.find(id); 
-    if (it == mjob.end()) return false;
-    return true;
+    return (mjob.find(id) != mjob.end());
 }
 
 bool Procesador::en_curso() const {
@@ -150,6 +148,6 @@ void Procesador::escribir() const {
     map <int, Proceso>::const_iterator it;
     for (it = mpos.begin(); it != mpos.end(); ++it) {
         cout << it->first << ' ';
-        mjob.at(it->second.consultar_ID()).escribir();
+        it->second.escribir();
     }
 }
