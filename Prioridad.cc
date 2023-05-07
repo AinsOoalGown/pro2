@@ -8,11 +8,6 @@ Prioridad::Prioridad() {
     proc_env = proc_rechazados = 0;
 }
 
-Prioridad::Prioridad(const string& id_pri) {
-    id_prior = id_pri;
-    proc_env = proc_rechazados = 0;
-}
-
 void Prioridad::add_job(const Proceso& p) {
     list<int>::iterator it = antique.end();
     antique.insert(it ,p.consultar_ID());

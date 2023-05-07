@@ -18,8 +18,6 @@
 class Prioridad {
 
 private:
-    /** @brief Cadena de caracteres que identifica a la prioridad */
-    string id_prior;
 
     /** @brief Lista de enteros correspondientes a los id de los procesos
      
@@ -47,17 +45,7 @@ public:
       \coste Constante
   */
     Prioridad();
-
-    /** @brief Creadora con valores concretos.
-
-      Se ejecuta automáticamente al declarar una prioridad.
-      \pre <em>cierto</em>
-      \post El resultado es una prioridad con ID = id_prior, 
-      un conjunto de procesos vacío y los atributos de tipo entero a 0.
-      \coste Constante
-  */
-    Prioridad(const string& id_pri);
-
+    
     //Modificadoras
 
     /** @brief Añade un proceso a la prioridad

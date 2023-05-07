@@ -36,6 +36,7 @@ void Cluster::compactar() { //no se usa
 }
 
 bool Cluster::existe_prc(const string& id) const {
+    if (id == "0") return false; 
     return (mprc.find(id) != mprc.end());
 
 }

@@ -14,7 +14,7 @@ void Area_espera::add_job(const Proceso& p, const string& id_prior) {
 }
 
 void Area_espera::add_prior(const string& id_prior) {
-    Prioridad p (id_prior);
+    Prioridad p;
     mprior.insert(make_pair(id_prior, p));
 }
 
@@ -48,7 +48,7 @@ void Area_espera::leer() {
     cin >> n;
     for (int i = 0; i < n; ++i) {
         cin >> s;
-        Prioridad pri(s);
+        Prioridad pri;
         mprior.insert(make_pair(s, pri));
     }
 }

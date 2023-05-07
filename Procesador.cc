@@ -17,21 +17,45 @@ Procesador::Procesador(const string& s, int m) {
 void Procesador::eliminar_job(int id, map <int,Proceso>::iterator& it) {
     if (id != -1) it = mpos.find(mjob[id]);
     mjob.erase(it->second.consultar_ID());
-    it = mpos.erase(it);
-    mmem.clear();
-    if (mjob.empty()) mmem[id_mem.second].insert(0);
-    else {
-        map<int,Proceso>::iterator it1 = mpos.begin();
-        if (it1->first != 0) mmem[it1->first].insert(0);
-        int ind;
-        while (it1 != mpos.end()) {
-            ind = it1->first + it1->second.consultar_MEM();
-            ++it1;
-            if (it1 != mpos.end() and ind != it1->first) mmem[it1->first - ind].insert(ind);   
+    if (mjob.empty()) {     //solo habia 1 proceso
+        mmem.clear();
+        mmem[id_mem.second].insert(0);
+    }
+    else {  //habia mas de 1 proceso
+        int ind = it->first;
+        int mem = it->second.consultar_MEM() + ind;
+        int ind_ant;
+        int ind_sig;
+        if (it != mpos.begin()) {
+            --it;
+            ind_ant = it->first + it->second.consultar_MEM();
+            if (ind != ind_ant) {
+                mmem[ind - ind_ant].erase(ind_ant);         
+                if (mmem[ind - ind_ant].empty()) mmem.erase(ind - ind_ant);
+            }
+            ++it;
         }
-        if (ind != id_mem.second) mmem[id_mem.second - ind].insert(ind);
+        else {
+            ind_ant = 0;
+            if (ind != 0) {
+                mmem[ind].erase(0);
+                if (mmem[ind].empty()) mmem.erase(ind);   
+            }
+        }
+        ++it;
+        if (it != mpos.end()) {
+            ind_sig = it->first;
+            if (ind_sig != mem) {
+                mmem[ind_sig - mem].erase(mem);
+                if (mmem[ind_sig - mem].empty()) mmem.erase(ind_sig - mem);
+            }
+        }
+        else ind_sig = id_mem.second;            
+        --it;
+        mmem[ind_sig - ind_ant].insert(ind_ant);
 
     }
+    it = mpos.erase(it);
 }
 
 void Procesador::avanzar_tiempo(int t) {
