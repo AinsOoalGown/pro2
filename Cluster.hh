@@ -65,7 +65,7 @@ public:
       \pre no existe p en el procesador con ID = id
       \post El resultado es el procesador con ID = id con los procesos originales más p si added = true,
       en caso contrario devuelve added = false 
-      \coste Logarítmico sobre coste lineal (consultar coste de add_job() de la clase Procesador)
+      \coste Logarítmico sobre coste logaritmico (consultar coste de add_job() de la clase Procesador)
     */
     void add_job_prc(const string& id, Proceso& p);
 

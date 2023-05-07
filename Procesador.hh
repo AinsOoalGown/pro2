@@ -31,12 +31,14 @@ private:
     /** @brief Mapa de indices de cada proceso ordenado crecientemente por su id */
     map <int, int> mjob;
 
-    /** @brief Mapa del los índices de las posiciones de los procesos en la memoria
+    /** @brief Mapa del los huecos de memoria con la posicion para cada tamaño
       
-      key = index, value = pair; first = space; second = id
      */
     map <int, set<int> > mmem; //key = hueco de espacio, value = indices de los huecos libres de memoria
 
+     /** @brief Mapa del los proceso del procesador ordenado por lo indices de menor a mayor
+      
+     */
     map <int, Proceso> mpos; //key = ind del proceso, value = proceso
     
 public:
@@ -67,7 +69,7 @@ public:
         \pre El p.i. (P) está inicializado, t > 0
         \post El p.i. contiene los procesos con T - t > 0, 
         en caso que los procesos son eliminados T - t <= 0 los procesos son eliminados
-        \coste Lineal (todo el mapa)  
+        \coste Lineal (todo el mapa) sobre logaritmico (eliminar_job) 
     */
     void avanzar_tiempo(int t);
     
@@ -76,7 +78,7 @@ public:
         \pre El p.i. (P) está inicializado, la memoria de p es menor 
         o igual a la memoria actual de P
         \post El p.i. contiene sus procesos originales más p 
-        \coste Lineal (mirar coste de search_mem_stack())
+        \coste Logarítmico
     */
     void add_job(const Proceso& p);
 
@@ -86,7 +88,7 @@ public:
         it puede estar referenciando a un valor o no
         \post El p.i. contiene sus procesos originales menos el proceso con ID = id
         y it apunta al siguiente valor de el elemento borrado
-        \coste Logarítmico (dos .erase de un map)
+        \coste Logarítmico 
     */
     void eliminar_job(int id, map <int,Proceso>::iterator& it);
 

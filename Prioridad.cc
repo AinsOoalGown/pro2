@@ -9,8 +9,7 @@ Prioridad::Prioridad() {
 }
 
 void Prioridad::add_job(const Proceso& p) {
-    list<int>::iterator it = antique.end();
-    antique.insert(it ,p.consultar_ID());
+    antique.insert(antique.end() ,p.consultar_ID());
     mjob.insert(make_pair(p.consultar_ID(),p));
 }
 
