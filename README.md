@@ -9,4 +9,6 @@ Juego de pruebas 3/4 || n = 3, m = 4 || Nota entrega intermedia (10/m * n) = 7,5
 
 -2ndo test privado
 
+-Eficiencia WA
+
 Costes incluidos
