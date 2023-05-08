@@ -15,47 +15,57 @@ Procesador::Procesador(const string& s, int m) {
 }
 
 void Procesador::eliminar_job(int id, map <int,Proceso>::iterator& it) {
-    if (id != -1) it = mpos.find(mjob[id]);
-    mjob.erase(it->second.consultar_ID());
-    if (mjob.empty()) {     //solo habia 1 proceso
-        mmem.clear();
-        mmem[id_mem.second].insert(0);
+    bool borrar = true;
+    if (id != -1) {
+        map<int,int>::iterator it1 = mjob.find(id);
+        if (it1 == mjob.end()) {
+            cout << "error: no existe proceso" << endl;
+            borrar = false;
+        }
+        else it = mpos.find(it1->second);
     }
-    else {  //habia mas de 1 proceso
-        int ind = it->first;
-        int mem = it->second.consultar_MEM() + ind;
-        int ind_ant;
-        int ind_sig;
-        if (it != mpos.begin()) {
-            --it;
-            ind_ant = it->first + it->second.consultar_MEM();
-            if (ind != ind_ant) {
-                mmem[ind - ind_ant].erase(ind_ant);         
-                if (mmem[ind - ind_ant].empty()) mmem.erase(ind - ind_ant);
+    if (borrar) {
+        mjob.erase(it->second.consultar_ID());
+        if (mjob.empty()) {     //solo habia 1 proceso
+            mmem.clear();
+            mmem[id_mem.second].insert(0);
+        }
+        else {  //habia mas de 1 proceso
+            int ind = it->first;
+            int mem = it->second.consultar_MEM() + ind;
+            int ind_ant;
+            int ind_sig;
+            if (it != mpos.begin()) {
+                --it;
+                ind_ant = it->first + it->second.consultar_MEM();
+                if (ind != ind_ant) {
+                    mmem[ind - ind_ant].erase(ind_ant);         
+                    if (mmem[ind - ind_ant].empty()) mmem.erase(ind - ind_ant);
+                }
+                ++it;
+            }
+            else {
+                ind_ant = 0;
+                if (ind != 0) {
+                    mmem[ind].erase(0);
+                    if (mmem[ind].empty()) mmem.erase(ind);   
+                }
             }
             ++it;
-        }
-        else {
-            ind_ant = 0;
-            if (ind != 0) {
-                mmem[ind].erase(0);
-                if (mmem[ind].empty()) mmem.erase(ind);   
+            if (it != mpos.end()) {
+                ind_sig = it->first;
+                if (ind_sig != mem) {
+                    mmem[ind_sig - mem].erase(mem);
+                    if (mmem[ind_sig - mem].empty()) mmem.erase(ind_sig - mem);
+                }
             }
-        }
-        ++it;
-        if (it != mpos.end()) {
-            ind_sig = it->first;
-            if (ind_sig != mem) {
-                mmem[ind_sig - mem].erase(mem);
-                if (mmem[ind_sig - mem].empty()) mmem.erase(ind_sig - mem);
-            }
-        }
-        else ind_sig = id_mem.second;            
-        --it;
-        mmem[ind_sig - ind_ant].insert(ind_ant);
+            else ind_sig = id_mem.second;            
+            --it;
+            mmem[ind_sig - ind_ant].insert(ind_ant);
 
+        }
+        it = mpos.erase(it);
     }
-    it = mpos.erase(it);
 }
 
 void Procesador::avanzar_tiempo(int t) {
@@ -71,7 +81,7 @@ void Procesador::avanzar_tiempo(int t) {
     }   
 }
 
-void Procesador::add_job(const Proceso& p) { 
+void Procesador::add_job(const Proceso& p) {
     int memo = p.consultar_MEM();
     map <int,set<int>>::iterator it1 = mmem.lower_bound(memo); //hueco igual o mayor a la memoria del proceso
     if (it1 == mmem.end()) cout << "error: no cabe proceso" << endl; 

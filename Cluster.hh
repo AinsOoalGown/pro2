@@ -28,6 +28,7 @@ class Cluster {
 private:
     /** @brief Estructura de procesadores del cluster */
     BinTree<string> Tprc;
+    
     /** @brief Mapa de procesadores ordenado crecientemente por su id */
     map <string, Procesador> mprc;
   
@@ -102,22 +103,6 @@ public:
     void compactar();
     
     //Consultoras
-
-    /** @brief Consultora de la existencia de un procesador
-
-      \pre El p.i. está inicializado
-      \post El resultado indica si existe el procesador con ID = id en el p.i.
-      \coste Logarítmico
-  */
-    bool existe_prc(const string& id) const; 
-
-    /** @brief Consultora de un procesador 
-
-      \pre Existe un procesador en el p.i. con ID = id
-      \post El resultado es el procesador con ID = id que contiene el p.i.
-      \coste Logarítmico
-  */
-    Procesador consultar_prc(const string& id) const;
 
     /** @brief Consultora de la existencia de un procesador auxiliar apartir de otro procesador
 
