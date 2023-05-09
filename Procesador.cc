@@ -37,7 +37,7 @@ void Procesador::eliminar_job(int id, map <int,Proceso>::iterator& it) {
             int ind_sig;
             if (it != mpos.begin()) {
                 --it;
-                ind_ant = it->first + it->second.consultar_MEM();
+                ind_ant = it->first + it->second.consultar_MEM();   
                 if (ind != ind_ant) {
                     mmem[ind - ind_ant].erase(ind_ant);         
                     if (mmem[ind - ind_ant].empty()) mmem.erase(ind - ind_ant);
@@ -51,7 +51,7 @@ void Procesador::eliminar_job(int id, map <int,Proceso>::iterator& it) {
                     if (mmem[ind].empty()) mmem.erase(ind);   
                 }
             }
-            ++it;
+            ++it;   
             if (it != mpos.end()) {
                 ind_sig = it->first;
                 if (ind_sig != mem) {
@@ -59,7 +59,13 @@ void Procesador::eliminar_job(int id, map <int,Proceso>::iterator& it) {
                     if (mmem[ind_sig - mem].empty()) mmem.erase(ind_sig - mem);
                 }
             }
-            else ind_sig = id_mem.second;            
+            else {
+                ind_sig = id_mem.second;
+                if (mem != id_mem.second){
+                    mmem[id_mem.second - mem].erase(mem);
+                    if (mmem[id_mem.second - mem].empty()) mmem.erase(id_mem.second - mem);
+                }
+            }        
             --it;
             mmem[ind_sig - ind_ant].insert(ind_ant);
 
