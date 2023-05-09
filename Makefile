@@ -1,4 +1,4 @@
-OPCIONS = -D_JUDGE_ -D_GLIBCXX_DEBUG -O2 -Wall -Wextra -Werror -Wno-sign-compare -std=c++11
+OPCIONS = -D_JUDGE_ -O2 -Wall -Wextra -Werror -Wno-sign-compare -std=c++11
 
 main.x: main.o Cluster.o Area_espera.o Prioridad.o Proceso.o Procesador.o
 	g++ -o program.exe *.o
