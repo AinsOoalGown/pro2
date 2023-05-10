@@ -60,17 +60,17 @@ BinTree<string> Cluster::seed() const {
 }
 
 bool Cluster::modif_tree(const string& id, BinTree<string>& a, Cluster& c) {
-    if (a.empty()) return false; // Si el árbol está vacío, no se encontró el nodo   
+    if (a.empty()) return false;    
     BinTree<string> l = a.left();
     BinTree<string> r = a.right();
     if (a.value() == id) {
         if (l.empty() and r.empty()) {
             a = c.seed();
-            return true; // Se encontró y reemplazó el nodo
+            return true; 
         } 
         else {
             cout << "error: procesador con auxiliares" << endl;
-            return false; // El nodo tiene auxiliares, no se puede reemplazar
+            return false; 
         }
     } 
     else {
