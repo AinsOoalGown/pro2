@@ -34,19 +34,53 @@ void Cluster::avanzar_tiempo_prc(int t) {
     }
 }
 
-void Cluster::añadir_cluster(const Cluster& c, const string& id) { //no se usa
-    c.leer_arbol(Tprc, mprc);
-    mprc[id].avanzar_tiempo(7);
-
-}
-
 void Cluster::compactar() { //no se usa
     mprc["proc12"].avanzar_tiempo(7);
 }
 
-bool Cluster::existe_aux(const string& id) const { // no se usa
-   return mprc.at(id).en_curso();
+map<string, Procesador> Cluster::bundle() const {
+    return mprc;
 }
+
+void Cluster::añadir_cluster(Cluster& c, const string& id) { 
+    map <string, Procesador>::iterator it = mprc.find(id);
+    if (it == mprc.end()) cout << "error: no existe procesador" << endl;
+    else {
+        if (it->second.en_curso()) cout << "error: procesador con procesos" << endl;
+        else if (modif_tree(id, Tprc, c)) {
+            mprc.erase(it);
+            map<string,Procesador> mix = c.bundle();
+            mprc.insert(mix.begin(), mix.end());
+        }
+    }
+}
+
+BinTree<string> Cluster::seed() const {
+    return Tprc;
+}
+
+bool Cluster::modif_tree(const string& id, BinTree<string>& a, Cluster& c) {
+    if (a.empty()) return false; // Si el árbol está vacío, no se encontró el nodo   
+    BinTree<string> l = a.left();
+    BinTree<string> r = a.right();
+    if (a.value() == id) {
+        if (l.empty() and r.empty()) {
+            a = c.seed();
+            return true; // Se encontró y reemplazó el nodo
+        } 
+        else {
+            cout << "error: procesador con auxiliares" << endl;
+            return false; // El nodo tiene auxiliares, no se puede reemplazar
+        }
+    } 
+    else {
+        bool b = modif_tree(id, l, c);
+        if (not b) b = modif_tree(id, r, c);
+        a = BinTree<string> (a.value(), l, r);
+        return b;
+    }
+}
+
 
 void Cluster::leer_arbol(BinTree<string>& a, map <string, Procesador>& mpr) {
     BinTree<string> l, r;

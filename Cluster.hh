@@ -46,6 +46,20 @@ private:
   */
     static void escribir_arbol(const BinTree<string>& a);
 
+    /** @brief A
+
+      \pre A
+      \post E
+      \coste *No implementado*
+  */
+    static bool modif_tree(const string& id, BinTree<string>& a, Cluster& c);
+
+    BinTree<string> seed() const;
+
+    map<string, Procesador> bundle() const;
+
+
+
 public:
 
     //Constructoras
@@ -92,7 +106,7 @@ public:
       \post El resultado es el p.i. más c en la posición del procesador con ID = id
       \coste *No implementada* 
   */
-    void añadir_cluster(const Cluster& c, const string& id);
+    void añadir_cluster(Cluster& c, const string& id);
 
     /** @brief Compacta todos los procesadores del clúster 
      

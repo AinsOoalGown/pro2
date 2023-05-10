@@ -38,11 +38,11 @@ int main() {
             cin >> id;
             Cluster c2;
             c2.leer();
-            c.añadir_cluster(c2, id);       //NO SE USA DE MOMENTO
-            cout << "error" << endl;  
+            cout << '#' << comando << ' ' << id << endl;
+            c.añadir_cluster(c2, id);         
         }
 
-        else if (comando == "ap" or comando == "alta_prioridad") {         //3      X
+        else if (comando == "ap" or comando == "alta_prioridad") {         //3      
             string id_prior;
             cin >> id_prior;
             cout << '#' << comando << ' ' << id_prior << endl;
