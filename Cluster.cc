@@ -17,6 +17,7 @@ bool Cluster::recibir_job(const Proceso& p) {
     int free_mem = it->second.MEM_libre();
     pair<int,int> pr = it->second.height_left();
     map<string, Procesador>::iterator it2 = it;
+    if (it->second.existe_job(id)) tight = -1;
     ++it;
     while (it != mprc.end()) {
         int hueco = it->second.hueco(mem);
