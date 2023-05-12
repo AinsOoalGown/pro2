@@ -1,12 +1,14 @@
 # Practica de pro2
 Simulación del rendimiento de procesadores interconectados
 
-Juego de pruebas 3/4 || n = 3, m = 4 || Nota entrega intermedia (10/m * n) = 7,5
+Instrucciones:
 
--Test público
+-Modificar cluster SI
 
--1er test privado
+-Enviar procesos cluster SI
 
--2ndo test privado
+-Compactar memoria cluster SI
+
+-Compactar memoria procesador NO
 
 Costes incluidos
