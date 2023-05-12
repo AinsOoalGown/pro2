@@ -11,6 +11,7 @@
 #include <iostream>
 #include <string>
 #include "BinTree.hh"
+#include <list>
 #include <utility>
 #include <map>
 #endif
@@ -28,6 +29,7 @@ class Cluster {
 private:
     /** @brief Estructura de procesadores del cluster */
     BinTree<string> Tprc;
+    
     /** @brief Mapa de procesadores ordenado crecientemente por su id */
     map <string, Procesador> mprc;
   
@@ -36,7 +38,7 @@ private:
       \post a contiene el árbol de procesadores leído de la entrada
       \coste Lineal respecto al número de procesadores del árbol leído
   */
-    static void leer_arbol(BinTree<string>& a, map <string, Procesador>& mpr);
+    static void leer_arbol(BinTree<string>& a, map <string, Procesador>& mpr, int alt, int izq);
     
     /** @brief Operación de escritura de un árbol de procesadores
       \pre  cierto
@@ -44,6 +46,22 @@ private:
       \coste Lineal respecto al número de procesadores del árbol escrito
   */
     static void escribir_arbol(const BinTree<string>& a);
+
+    /** @brief A
+
+      \pre A
+      \post E
+      \coste *No implementado*
+  */
+    static bool modif_tree(const string& id, BinTree<string>& a, Cluster& c);
+
+    void update_tree(int alt, int izq, const BinTree<string>& a);
+
+    BinTree<string> seed() const;
+
+    map<string, Procesador> bundle() const;
+
+
 
 public:
 
@@ -60,14 +78,16 @@ public:
 
     //Modificadoras
 
+  bool recibir_job(const Proceso& p);
+
     /** @brief Añade un proceso en un procesador
      
       \pre no existe p en el procesador con ID = id
       \post El resultado es el procesador con ID = id con los procesos originales más p si added = true,
       en caso contrario devuelve added = false 
-      \coste Logarítmico sobre coste lineal (consultar coste de add_job() de la clase Procesador)
+      \coste Logarítmico sobre coste logaritmico (consultar coste de add_job() de la clase Procesador)
     */
-    void add_job_prc(const string& id, Proceso& p, bool& added);
+    void add_job_prc(const string& id, Proceso& p);
 
     /** @brief Elimina un proceso del procesador 
      
@@ -91,7 +111,7 @@ public:
       \post El resultado es el p.i. más c en la posición del procesador con ID = id
       \coste *No implementada* 
   */
-    void añadir_cluster(const Cluster& c, const string& id);
+    void añadir_cluster(Cluster& c, const string& id);
 
     /** @brief Compacta todos los procesadores del clúster 
      
@@ -102,30 +122,6 @@ public:
     void compactar();
     
     //Consultoras
-
-    /** @brief Consultora de la existencia de un procesador
-
-      \pre El p.i. está inicializado
-      \post El resultado indica si existe el procesador con ID = id en el p.i.
-      \coste Logarítmico
-  */
-    bool existe_prc(const string& id) const; 
-
-    /** @brief Consultora de un procesador 
-
-      \pre Existe un procesador en el p.i. con ID = id
-      \post El resultado es el procesador con ID = id que contiene el p.i.
-      \coste Logarítmico
-  */
-    Procesador consultar_prc(const string& id) const;
-
-    /** @brief Consultora de la existencia de un procesador auxiliar apartir de otro procesador
-
-      \pre El p.i. está inicializado
-      \post El resultado indica si en el procesador con ID = id del p.i. existe un procesador auxiliar
-      \coste *No implementado*
-  */
-      bool existe_aux(const string& id) const;
 
     //Lectura y escritura
 

@@ -10,36 +10,39 @@ Area_espera::Area_espera() {
 }
 
 void Area_espera::add_job(const Proceso& p, const string& id_prior) {
-    mprior[id_prior].add_job(p);
+    map <string, Prioridad>::iterator it = mprior.find(id_prior);
+    if (it == mprior.end()) cout << "error: no existe prioridad" << endl;
+    else {
+        if (it->second.existe_job(p.consultar_ID())) cout << "error: ya existe proceso" << endl;
+        else it->second.add_job(p);
+    }
+    
 }
 
 void Area_espera::add_prior(const string& id_prior) {
-    Prioridad p (id_prior);
-    mprior.insert(make_pair(id_prior, p));
+    if (mprior.find(id_prior) == mprior.end()) {
+        Prioridad p;
+        mprior.insert(make_pair(id_prior, p));
+    }
+    else cout << "error: ya existe prioridad" << endl;
 }
 
 void Area_espera::eliminar_prior(const string& id_prior) {
-    mprior.erase(id_prior);
+    map<string,Prioridad>::iterator it = mprior.find(id_prior);
+    if (it == mprior.end()) cout << "error: no existe prioridad" << endl;
+    else {
+        if (it->second.en_espera()) cout << "error: prioridad con procesos" << endl;
+        else mprior.erase(it);
+    }
+    
 }
 
-void Area_espera::enviar_job_a_cluster() {  //no se usa
-    mprior["proc12"].escribir_job();
-}
-
-bool Area_espera::pendiente_global() const {  //no se usa
-    return false;
-}
-
-bool Area_espera::id_prior_pendiente (const string& id_prior) const {
-    return mprior.at(id_prior).en_espera();
-}
-
-bool Area_espera::existe_prior(const string& id_prior) const {
-    return (mprior.find(id_prior) != mprior.end());
-}
-
-bool Area_espera::existe_prior_job(const string& id_prior, int id) const {
-   return mprior.at(id_prior).existe_job(id);
+void Area_espera::enviar_job_a_cluster(int n, Cluster& c) {  
+    map <string, Prioridad>::iterator it = mprior.begin();
+    while (n > 0 and it != mprior.end()) {
+        it->second.enviar_proceso(n, c);
+        ++it;   
+    }
 }
 
 void Area_espera::leer() {
@@ -48,7 +51,7 @@ void Area_espera::leer() {
     cin >> n;
     for (int i = 0; i < n; ++i) {
         cin >> s;
-        Prioridad pri(s);
+        Prioridad pri;
         mprior.insert(make_pair(s, pri));
     }
 }
@@ -62,7 +65,16 @@ void Area_espera::escribir() const {
 }
 
 void Area_espera::escribir_prior(const string& id_prior, map <string, Prioridad>::const_iterator& it) const {
-    if (id_prior != "*") it = mprior.find(id_prior);
-    if (it->second.en_espera()) it->second.escribir_job(); 
-    it->second.escribir_env_rech();
+    if (id_prior != "*") {
+        it = mprior.find(id_prior);
+        if (it == mprior.end()) cout << "error: no existe prioridad" << endl;
+        else {
+            if (it->second.en_espera()) it->second.escribir_job(); 
+            it->second.escribir_env_rech();
+        }
+    }
+    else {
+        if (it->second.en_espera()) it->second.escribir_job(); 
+        it->second.escribir_env_rech();
+    }
 }

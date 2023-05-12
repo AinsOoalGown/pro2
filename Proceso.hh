@@ -29,7 +29,7 @@ private:
      
       first = índice de la posición que ocupa en el memoria, second = memoria que ocupa
     */
-    pair <int, int> ind_mem; 
+    int mem;
 
 public:
     //Constructoras
@@ -44,14 +44,6 @@ public:
     Proceso();
 
     //Modificadoras
-
-    /** @brief Añade el índice de la posición que ocupa en memoria 
-     
-      \pre <em>cierto</em>
-      \post El resultado es el p.i. con el índice = ind
-      \coste Constante
-  */
-    void add_indice (int ind);
 
     /** @brief Resta el tiempo de ejecución del proceso
      
@@ -76,14 +68,6 @@ public:
         \coste Constante
     */
     int consultar_MEM() const;
-
-    /** @brief Consultora del índice del proceso
-        \pre <em>cierto</em>
-        \post El resultado es el índice de la posición que ocupa 
-        en la memoria del parámetro implícito
-        \coste Constante
-    */
-    int consultar_ind() const;
 
     /** @brief Consultora del tiempo de ejecución restante del proceso
         \pre <em>cierto</em>

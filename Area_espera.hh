@@ -71,42 +71,10 @@ public:
         en caso contrario se vuelve a enviar al área de espera
         \coste *No implementado*
     */
-    void enviar_job_a_cluster(); //envia un proceso pendiente al cluster
+    void enviar_job_a_cluster(int n, Cluster& c); //envia un proceso pendiente al cluster
 
     //Consultoras
-
-    /** @brief Consultora del estado global de los procesos
-
-       \pre El parámetro implícito está inicializado
-       \post El resultado indica si aun quedan procesos pendientes
-       \coste *No implementado*
-  */
-    bool pendiente_global() const; //devuelve true si aun quedan procesos pendientes
-
-    /** @brief Consultora del estado de los procesos con un identificador de prioridad
-
-       \pre El parámetro implícito contiene un prioridad con ID = id_prioridad
-       \post El resultado indica si aun quedan procesos pendientes con ID de prioridad = id_prior
-       \coste Logarítmico
-  */
-    bool id_prior_pendiente (const string& id_prior) const; //devuelve true si hay algun proceso pendiente con id_prior
     
-    /** @brief Consultora de la existencia de una prioridad en el área de espera 
-
-       \pre El parámetro implícito está inicializado
-       \post El resultado indica si existe la prioridad con id_prior en el p.i.
-       \coste Logarítmico   
-  */
-    bool existe_prior(const string& id_prior) const;
-    
-      /** @brief Consultora de la existencia de un proceso con una prioridad en el área de espera  
-
-        \pre El parámetro implícito está inicializado
-        \post El resultado indica si el proceso con ID = id y la prioridad con id_prior existe en el p.i.
-        \coste Logarítmico sobre coste logarítmico
-    */
-    bool existe_prior_job(const string& id_prior, int id) const;
-
     //Lectura y escritura
 
     /** @brief Operación de lectura

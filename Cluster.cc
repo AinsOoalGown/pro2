@@ -9,13 +9,79 @@ Cluster::Cluster() {
 
 }
 
-void Cluster::add_job_prc(const string& id, Proceso& p, bool& added) {
-    mprc[id].add_job(p,added);
+bool Cluster::recibir_job(const Proceso& p) {   
+    int mem = p.consultar_MEM();
+    cout << p.consultar_ID() << " la mem es " << mem << endl;
+    map<string, Procesador>::iterator it = mprc.begin();
+    int tight = it->second.hueco(mem);
+    int free_mem = it->second.MEM_libre();
+    list <map<string, Procesador>::iterator> l;        //lista con los procesadores con el hueco mas ajustado para el proceso
+    l.insert(l.begin(), it);
+    ++it;
+    while (it != mprc.end()) {
+        int hueco = it->second.hueco(mem);
+        int fmem = it->second.MEM_libre();
+        if (tight == -1 or (tight > hueco and hueco != -1)) {
+            l.clear();
+            l.insert(l.begin(), it);
+            tight = hueco;
+            free_mem = fmem;
+        }
+        else if (tight == hueco) {
+            if (fmem > free_mem) {
+                l.clear();
+                l.insert(l.begin(), it);
+                free_mem = fmem;
+            }    
+            else if (fmem == free_mem) l.insert(l.end(), it);
+        }
+        ++it;
+    }
+    if (tight == -1) return false;
+    
+    if (l.size() == 1) {
+        (*l.begin())->second.add_job(p);         //vuelve a buscar en el mapa de huecos...(mejor idea?)
+        return true;
+    } 
+    list<map<string, Procesador>::iterator>::iterator itl = l.begin();  //iterador de la lista de iteradores de map del atribute priv
+    map<string, Procesador>::iterator itm = *itl;    //primer iterador de la lista de iteradores de map
+    pair <int,int> p1, p2;
+     p1 = itm->second.height_left();     //pair save
+    ++itl;
+    while (itl != l.end()) {
+        p2 = (*itl)->second.height_left();   
+        if (p1.first > p2.first) {
+            itm = *itl;
+            p1 = p2;
+        }
+        else if (p1.first == p2.first) {
+            if (p1.second < p2.second) {
+                itm = *itl;
+                p1 = p2;
+            }
+        }
+        ++itl;
+    }
+    itm->second.add_job(p);
+    return true;
+}
+
+void Cluster::add_job_prc(const string& idprc, Proceso& p) {
+    map<string, Procesador>::iterator it = mprc.find(idprc);
+    if (it == mprc.end()) cout << "error: no existe procesador" << endl;
+    else {
+        if (it->second.existe_job(p.consultar_ID())) cout << "error: ya existe proceso" << endl;
+        else it->second.add_job(p);
+    }
 }
 
 void Cluster::eliminar_job_prc(const string& idprc, int idjob) {
-    map <int,Proceso>::iterator it;
-    mprc[idprc].eliminar_job(idjob, it);
+   map<string, Procesador>::iterator it = mprc.find(idprc);
+   if (it == mprc.end()) cout << "error: no existe procesador" << endl;
+   else {
+        map <int,Proceso>::iterator it1;
+        it->second.eliminar_job(idjob, it1);
+   }
 }
 
 void Cluster::avanzar_tiempo_prc(int t) {
@@ -25,41 +91,79 @@ void Cluster::avanzar_tiempo_prc(int t) {
     }
 }
 
-void Cluster::añadir_cluster(const Cluster& c, const string& id) { //no se usa
-    c.leer_arbol(Tprc, mprc);
-    mprc[id].avanzar_tiempo(7);
-
-}
-
 void Cluster::compactar() { //no se usa
     mprc["proc12"].avanzar_tiempo(7);
 }
 
-bool Cluster::existe_prc(const string& id) const {
-    map <string,Procesador>::const_iterator it = mprc.find(id);
-    if (it == mprc.end()) return false;
-    return true;
+map<string, Procesador> Cluster::bundle() const {
+    return mprc;
 }
 
-Procesador Cluster::consultar_prc(const string& id) const {
-    return mprc.at(id);
+void Cluster::añadir_cluster(Cluster& c, const string& id) { 
+    map <string, Procesador>::iterator it = mprc.find(id);
+    if (it == mprc.end()) cout << "error: no existe procesador" << endl;
+    else {
+        if (it->second.en_curso()) cout << "error: procesador con procesos" << endl;
+        else if (modif_tree(id, Tprc, c)) {
+            pair<int,int> pr = it->second.height_left();
+            c.update_tree(pr.first, pr.second, c.seed());      //nuevas posiciones de altura y grado de izquierda
+            mprc.erase(it);
+            map<string,Procesador> mix = c.bundle();
+            mprc.insert(mix.begin(), mix.end());
+        }
+    }
 }
 
-bool Cluster::existe_aux(const string& id) const { // no se usa
-   return mprc.at(id).en_curso();
+void Cluster::update_tree(int alt, int izq, const BinTree<string>& a) {
+    BinTree<string> l, r;
+    if (a.empty()) return;
+    else {
+        mprc[a.value()].añadir_alt_izq(alt, izq);
+        l = a.left();
+        r = a.right();
+        update_tree(alt + 1, izq + 1, l);
+        update_tree(alt + 1, izq - 1, r);
+    }
 }
 
-void Cluster::leer_arbol(BinTree<string>& a, map <string, Procesador>& mpr) {
+BinTree<string> Cluster::seed() const {
+    return Tprc;
+}
+
+bool Cluster::modif_tree(const string& id, BinTree<string>& a, Cluster& c) {
+    if (a.empty()) return false; 
+    BinTree<string> l = a.left();
+    BinTree<string> r = a.right();
+    if (a.value() == id) {
+        if (l.empty() and r.empty()) {
+            a = c.seed();
+            return true; 
+        } 
+        else {
+            cout << "error: procesador con auxiliares" << endl;
+            return false; 
+        }
+    } 
+    else {
+        bool b = modif_tree(id, l, c);
+        if (not b) b = modif_tree(id, r, c);
+        a = BinTree<string> (a.value(), l, r);
+        return b;
+    }
+}
+
+
+void Cluster::leer_arbol(BinTree<string>& a, map <string, Procesador>& mpr, int alt, int izq) {       //añadir nuevos parametros 
     BinTree<string> l, r;
     string s;
     cin >> s;
     if (s != "*") {
         int m;
         cin >> m;
-        Procesador prc(s, m);
+        Procesador prc(s, m, alt, izq);           //añadir nuevos valores para los nuevos atributos
         mpr.insert(make_pair(s, prc));
-        leer_arbol(l, mpr);
-        leer_arbol(r, mpr);
+        leer_arbol(l, mpr, alt + 1, izq + 1);
+        leer_arbol(r, mpr, alt + 1, izq - 1);      
         a = BinTree<string>(s, l, r);
     }
     else a = BinTree<string>();
@@ -68,7 +172,9 @@ void Cluster::leer_arbol(BinTree<string>& a, map <string, Procesador>& mpr) {
 
 void Cluster::leer() {
  mprc.clear();
- leer_arbol(Tprc, mprc);
+ int alt = 0;
+ int izq = 0;
+ leer_arbol(Tprc, mprc, alt, izq);
 }
 
 void Cluster::escribir_arbol(const BinTree<string>& a) {
@@ -95,6 +201,10 @@ void Cluster::escribir_todos() const {
 }
 
  void Cluster::escribir_prc(const string& id, map<string,Procesador>::const_iterator& it) const { 
-    if (id != "*") it = mprc.find(id);
-    if (it->second.en_curso()) it->second.escribir();
+    if (id != "*") { 
+        it = mprc.find(id);
+        if (it == mprc.end()) cout << "error: no existe procesador" << endl;
+        else if (it->second.en_curso()) it->second.escribir();
+    }
+    else if (it->second.en_curso()) it->second.escribir();
  }

@@ -7,10 +7,9 @@
 #define PROCESADOR_HH
 
 #include "Proceso.hh"
-#include "Prioridad.hh"
 #ifndef NO_DIAGRAM
-#include<queue>
 #include <utility>
+#include <set>
 #include <map>
 #include <vector>
 #endif
@@ -21,33 +20,30 @@ using namespace std;
 class Procesador {
 
 private:
-    /** @brief Pair con el id y memoria maxima del procesador
+
+    string id;
+    /** @brief Pair con memoria libre y memoria maxima del procesador
      
-      first = string con el id del procesador, 
+      first = entero con memoria libre, 
       second = entero con capacidad/memoria máxima del procesador 
     */
-    pair <string, int> id_mem; //id + mem_max
+    pair <int, int> id_mem; //mem_libre + mem_max
 
-    /** @brief Mapa de procesos ordenado crecientemente por su id */
-    map <int, Proceso> mjob;
+    pair<int,int> alt_izq;  //altura + grado izq
 
-    /** @brief Mapa del los índices de las posiciones de los procesos en la memoria
+    /** @brief Mapa de indices de cada proceso ordenado crecientemente por su id */
+    map <int, int> mjob;
+
+    /** @brief Mapa del los huecos de memoria con la posicion para cada tamaño
       
-      key = index, value = pair; first = space; second = id
      */
-    map <int, pair<int, int> > mmem; //key = index, value = pair; first = space; second = id 
+    map <int, set<int> > mmem; //key = hueco de espacio, value = indices de los huecos libres de memoria
 
-    /** @brief Busca el índice de memoria con espacio contiguo más ajustado, si existe
-     
-        \pre Hay almenos un proceso activo, 0 < memo
-        \post Devuelve el índice de la posición con espacio libre 
-        más ajustado al tamaño del proceso (memo) en caso de que exista,
-        devuelve -1 si no
-        \coste Lineal (en el peor de los casos ha de recorrer todo el mapa)
-    */
-    static int search_mem_stack(int memo, int mem_max, const map <int, pair<int, int> >& mem);
+     /** @brief Mapa del los proceso del procesador ordenado por lo indices de menor a mayor
+      
+     */
+    map <int, Proceso> mpos; //key = ind del proceso, value = proceso
     
-
 public:
     //Constructoras
 
@@ -67,16 +63,18 @@ public:
       \post El resultado es un proceso con id "s" y memoria máxima "m"
       \coste Constante
     */
-    Procesador(const string& s, int m);
+    Procesador(const string& s, int m, int altura, int left);
 
     //Modificadoras
+
+    void añadir_alt_izq(int alt, int izq);
 
     /** @brief Avanza el tiempo del procesador 
      
         \pre El p.i. (P) está inicializado, t > 0
         \post El p.i. contiene los procesos con T - t > 0, 
         en caso que los procesos son eliminados T - t <= 0 los procesos son eliminados
-        \coste Lineal (todo el mapa)  
+        \coste Lineal (todo el mapa) sobre logaritmico (eliminar_job) 
     */
     void avanzar_tiempo(int t);
     
@@ -85,9 +83,9 @@ public:
         \pre El p.i. (P) está inicializado, la memoria de p es menor 
         o igual a la memoria actual de P
         \post El p.i. contiene sus procesos originales más p 
-        \coste Lineal (mirar coste de search_mem_stack())
+        \coste Logarítmico
     */
-    void add_job(Proceso& p, bool& added);
+    void add_job(const Proceso& p);
 
     /** @brief Elimina un proceso del procesador 
      
@@ -95,7 +93,7 @@ public:
         it puede estar referenciando a un valor o no
         \post El p.i. contiene sus procesos originales menos el proceso con ID = id
         y it apunta al siguiente valor de el elemento borrado
-        \coste Logarítmico (dos .erase de un map)
+        \coste Logarítmico 
     */
     void eliminar_job(int id, map <int,Proceso>::iterator& it);
 
@@ -109,6 +107,12 @@ public:
     void compactar_mem();
 
     //Consultoras
+
+    pair<int,int> height_left() const;
+
+    int MEM_libre() const;
+
+    int hueco(int mem) const;
 
     /** @brief Consultora de el ID del procesador
      
@@ -136,15 +140,6 @@ public:
     bool en_curso() const;
 
     //Lectura y escritura
-
-    /** @brief Operación de lectura
-
-      \pre Hay preparados en el canal standard de entrada los datos de un procesador
-      \post El parámetro ímplicito pasa a tener los atributos leídos 
-      del canal standard de entrada
-      \coste Constante
-    */
-    void leer(); 
 
     /** @brief Operación de escritura
 

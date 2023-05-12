@@ -38,43 +38,31 @@ int main() {
             cin >> id;
             Cluster c2;
             c2.leer();
-            if (c.existe_prc(id) and not c.consultar_prc(id).en_curso()
-            and not c.existe_aux(id)) c.añadir_cluster(c2, id);
-            else cout << "error" << endl;  
+            cout << '#' << comando << ' ' << id << endl;
+            c.añadir_cluster(c2, id);         
         }
 
-        else if (comando == "ap" or comando == "alta_prioridad") {         //3
+        else if (comando == "ap" or comando == "alta_prioridad") {         //3      
             string id_prior;
             cin >> id_prior;
             cout << '#' << comando << ' ' << id_prior << endl;
-            if (not ae.existe_prior(id_prior)) ae.add_prior(id_prior);
-            else cout << "error: ya existe prioridad" << endl;
+            ae.add_prior(id_prior);      
         }
 
-        else if (comando == "bp" or comando == "baja_prioridad") {         //4
+        else if (comando == "bp" or comando == "baja_prioridad") {         //4   
             string id_prior;
             cin >> id_prior;
-            cout << '#' << comando << ' ' << id_prior << endl;  
-            if (ae.existe_prior(id_prior)) {
-                if (not ae.id_prior_pendiente(id_prior)) ae.eliminar_prior(id_prior);
-                else cout << "error: prioridad con procesos" << endl;
-            }
-            else cout << "error: no existe prioridad" << endl;
+            cout << '#' << comando << ' ' << id_prior << endl;   
+            ae.eliminar_prior(id_prior);     
         }
         
-        else if (comando == "ape" or comando == "alta_proceso_espera") {       //5
+        else if (comando == "ape" or comando == "alta_proceso_espera") {       //5  
             string id_prior;
             cin >> id_prior;
             Proceso p;
             p.leer();
-            cout << '#' << comando << ' ' << id_prior << ' ' << p.consultar_ID() << endl;
-            if (ae.existe_prior(id_prior)) {
-                if (not ae.existe_prior_job(id_prior, p.consultar_ID())) {
-                    ae.add_job(p, id_prior);
-                }
-                else cout << "error: ya existe proceso" << endl;
-            }
-            else cout << "error: no existe prioridad" << endl;
+            cout << '#' << comando << ' ' << id_prior << ' ' << p.consultar_ID() << endl;     
+            ae.add_job(p, id_prior); 
         }
 
         else if (comando == "app" or comando == "alta_proceso_procesador") {        //6
@@ -83,15 +71,7 @@ int main() {
             Proceso p;
             p.leer();
             cout << '#' << comando << ' ' << id << ' ' << p.consultar_ID() << endl;
-            if (c.existe_prc(id)) {
-                if (not c.consultar_prc(id).existe_job(p.consultar_ID())) { 
-                    bool added = false;
-                    c.add_job_prc(id, p, added);
-                    if (not added) cout << "error: no cabe proceso" << endl;
-                }
-                else cout << "error: ya existe proceso" << endl;
-            }
-            else cout << "error: no existe procesador" << endl;
+            c.add_job_prc(id, p);             
         }
 
         else if (comando == "bpp" or comando == "baja_proceso_procesador") {        //7
@@ -99,25 +79,14 @@ int main() {
             int idjob;     //id proceso
             cin >> idprc >> idjob;
             cout << '#' << comando << ' ' << idprc << ' ' << idjob << endl;
-            if (c.existe_prc(idprc)) { 
-                if (c.consultar_prc(idprc).existe_job(idjob)) c.eliminar_job_prc(idprc,idjob); 
-                else cout << "error: no existe proceso" << endl;
-            }
-            else cout << "error: no existe procesador" << endl;
-
+            c.eliminar_job_prc(idprc,idjob); 
         }
 
         else if (comando == "epc" or comando == "enviar_procesos_cluster") {        //8
             int n;
             cin >> n;
-            bool salir = false;
-            while (n >= 0 and not salir) {
-                if (ae.pendiente_global()) {
-                    ae.enviar_job_a_cluster();
-                    --n;
-                }
-                else salir = true;
-            }
+            cout << '#' << comando << ' ' << n << endl;
+            ae.enviar_job_a_cluster(n, c);   
         }
 
         else if (comando == "at" or comando == "avanzar_tiempo") {     //9
@@ -127,13 +96,12 @@ int main() {
             c.avanzar_tiempo_prc(t);  
         }
 
-        else if (comando == "ipri" or comando == "imprimir_prioridad") {   //10
+        else if (comando == "ipri" or comando == "imprimir_prioridad") {   //10 
             string id_prior;
             cin >> id_prior;
             cout << '#' << comando << ' ' << id_prior << endl;
             map <string, Prioridad>::const_iterator it;
-            if (ae.existe_prior(id_prior)) ae.escribir_prior(id_prior, it);
-            else cout << "error: no existe prioridad" << endl;
+            ae.escribir_prior(id_prior, it);    
         }
 
         else if (comando == "iae" or comando == "imprimir_area_espera") {   //11
@@ -144,9 +112,8 @@ int main() {
             string id;
             cin >> id;
             cout << '#' << comando << ' ' << id << endl;
-            map <string,Procesador>::const_iterator it;
-            if (c.existe_prc(id)) c.escribir_prc(id, it);     
-            else cout << "error: no existe procesador" << endl;
+            map <string, Procesador>::const_iterator it;
+            c.escribir_prc(id, it);     
         }
         
         else if (comando == "ipc" or comando == "imprimir_procesadores_cluster") {  //13
@@ -160,8 +127,7 @@ int main() {
         else if (comando == "cmp" or comando == "compactar_memoria_procesador") {    //15
             string id;
             cin >> id;          //MAL!! NO USAR CONSULTAR PARA MODIFICAR
-            if (c.existe_prc(id)) c.consultar_prc(id).compactar_mem(); 
-            else cout << "error:" << endl;
+            cout << "error:" << endl;
         }
     
         else if (comando == "cmc" or comando == "compactar_memoria_cluster") c.compactar();   //16
