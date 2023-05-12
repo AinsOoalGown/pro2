@@ -28,7 +28,6 @@ void Prioridad::enviar_proceso(int& n, Cluster &c) {        //funciona
             else {
                 antique.insert(antique.end(), (*it));
                 it = antique.erase(it);
-                cout << "el id es " << (*it).consultar_ID() << endl;
                 ++env.second;   
             }
             ++i;

@@ -127,7 +127,7 @@ void Procesador::add_job(const Proceso& p) {
 }
 
 
-void Procesador::compactar_mem() {  //no se usa
+void Procesador::compactar_mem() {  
     cout << mjob[78] << endl;
 }
 

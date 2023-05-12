@@ -126,11 +126,14 @@ int main() {
         }
         else if (comando == "cmp" or comando == "compactar_memoria_procesador") {    //15
             string id;
-            cin >> id;          //MAL!! NO USAR CONSULTAR PARA MODIFICAR
-            cout << "error:" << endl;
+            cin >> id; 
+            cout << '#' << comando << ' ' << id << endl;      
         }
     
-        else if (comando == "cmc" or comando == "compactar_memoria_cluster") c.compactar();   //16
+        else if (comando == "cmc" or comando == "compactar_memoria_cluster") {      //16
+            cout << '#' << comando << endl;
+            c.compactar();   
+        }
         cin >> comando;
     }
 }

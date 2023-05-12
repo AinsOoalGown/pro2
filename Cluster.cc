@@ -11,59 +11,50 @@ Cluster::Cluster() {
 
 bool Cluster::recibir_job(const Proceso& p) {   
     int mem = p.consultar_MEM();
-    cout << p.consultar_ID() << " la mem es " << mem << endl;
+    int id = p.consultar_ID();
     map<string, Procesador>::iterator it = mprc.begin();
     int tight = it->second.hueco(mem);
     int free_mem = it->second.MEM_libre();
-    list <map<string, Procesador>::iterator> l;        //lista con los procesadores con el hueco mas ajustado para el proceso
-    l.insert(l.begin(), it);
+    pair<int,int> pr = it->second.height_left();
+    map<string, Procesador>::iterator it2 = it;
     ++it;
     while (it != mprc.end()) {
         int hueco = it->second.hueco(mem);
         int fmem = it->second.MEM_libre();
-        if (tight == -1 or (tight > hueco and hueco != -1)) {
-            l.clear();
-            l.insert(l.begin(), it);
+        pair<int,int> pr2 = it->second.height_left();
+        if ((tight == -1 or (tight > hueco and hueco != -1)) and not it->second.existe_job(id)) {
             tight = hueco;
             free_mem = fmem;
+            pr = pr2;
+            it2 = it;
         }
         else if (tight == hueco) {
             if (fmem > free_mem) {
-                l.clear();
-                l.insert(l.begin(), it);
                 free_mem = fmem;
-            }    
-            else if (fmem == free_mem) l.insert(l.end(), it);
+                pr = pr2;
+                it2 = it;
+            }
+            else if (fmem == free_mem) {
+                if (pr.first > pr2.first) {
+                    pr = pr2;
+                    it2 = it;
+                }
+                else if (pr.first == pr2.first) {
+                    if (pr.second < pr2.second) {
+                        pr.second = pr2.second;
+                        it2 = it;
+                    }
+                }
+            }
+
         }
         ++it;
     }
     if (tight == -1) return false;
-    
-    if (l.size() == 1) {
-        (*l.begin())->second.add_job(p);         //vuelve a buscar en el mapa de huecos...(mejor idea?)
+    else {
+        it2->second.add_job(p);
         return true;
-    } 
-    list<map<string, Procesador>::iterator>::iterator itl = l.begin();  //iterador de la lista de iteradores de map del atribute priv
-    map<string, Procesador>::iterator itm = *itl;    //primer iterador de la lista de iteradores de map
-    pair <int,int> p1, p2;
-     p1 = itm->second.height_left();     //pair save
-    ++itl;
-    while (itl != l.end()) {
-        p2 = (*itl)->second.height_left();   
-        if (p1.first > p2.first) {
-            itm = *itl;
-            p1 = p2;
-        }
-        else if (p1.first == p2.first) {
-            if (p1.second < p2.second) {
-                itm = *itl;
-                p1 = p2;
-            }
-        }
-        ++itl;
     }
-    itm->second.add_job(p);
-    return true;
 }
 
 void Cluster::add_job_prc(const string& idprc, Proceso& p) {
@@ -91,8 +82,12 @@ void Cluster::avanzar_tiempo_prc(int t) {
     }
 }
 
-void Cluster::compactar() { //no se usa
-    mprc["proc12"].avanzar_tiempo(7);
+void Cluster::compactar() { 
+    map<string,Procesador>::iterator it = mprc.begin();
+    while (it != mprc.end()) {
+        it->second.compactar_mem();
+        ++it;
+    }
 }
 
 map<string, Procesador> Cluster::bundle() const {
