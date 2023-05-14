@@ -9,6 +9,6 @@ Instrucciones:
 
 -Compactar memoria cluster SI
 
--Compactar memoria procesador NO
+-Compactar memoria procesador SI
 
 Costes incluidos
