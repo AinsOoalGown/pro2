@@ -127,7 +127,9 @@ int main() {
         else if (comando == "cmp" or comando == "compactar_memoria_procesador") {    //15
             string id;
             cin >> id; 
-            cout << '#' << comando << ' ' << id << endl;      
+            cout << '#' << comando << ' ' << id << endl;
+            c.compactar_prc(id);
+                  
         }
     
         else if (comando == "cmc" or comando == "compactar_memoria_cluster") {      //16

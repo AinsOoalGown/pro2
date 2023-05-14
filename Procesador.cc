@@ -128,7 +128,24 @@ void Procesador::add_job(const Proceso& p) {
 
 
 void Procesador::compactar_mem() {  
-    cout << mjob[78] << endl;
+    if (not mjob.empty()) {
+        mmem.clear();
+        map <int, Proceso>::iterator it = mpos.begin();
+        int length = 0;
+        while (it != mpos.end()) {
+            if (it->first != length) {
+                mpos.insert(it, make_pair(length, it->second));  //insert detras del elemento a eliminar
+                mjob[it->second.consultar_ID()] = length;        //actualizamos mjob map
+                length += it->second.consultar_MEM();   //siguiente indice al que se tiene que mover
+                it = mpos.erase(it);        //avanzas al siguiente 
+            }
+            else {
+                length += it->second.consultar_MEM();
+                ++it;
+            }
+        }
+        mmem[id_mem.second - length].insert(length);
+    }
 }
 
 pair<int,int> Procesador::height_left() const {

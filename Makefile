@@ -1,11 +1,11 @@
 OPCIONS = -D_JUDGE_ -O2 -Wall -Wextra -Werror -Wno-sign-compare -std=c++11
 
-program.x: program.o Cluster.o Area_espera.o Prioridad.o Proceso.o Procesador.o
+program.exe: program.o Cluster.o Area_espera.o Prioridad.o Proceso.o Procesador.o
 	g++ -o program.exe *.o
 Cluster.o: Procesador.hh Proceso.hh
-	g++ -c Cluster.cc $(OPCIONS) -I $(INCLUSIONS) 
+	g++ -c Cluster.cc $(OPCIONS) 
 Area_espera.o: Prioridad.hh Proceso.hh Cluster.hh
-	g++ -c Area_espera.cc $(OPCIONS) -I $(INCLUSIONS)
+	g++ -c Area_espera.cc $(OPCIONS) 
 Prioridad.o: Proceso.hh Cluster.hh
 	g++ -c Prioridad.cc $(OPCIONS)
 Proceso.o: 
@@ -13,7 +13,7 @@ Proceso.o:
 Procesador.o: Proceso.hh 
 	g++ -c Procesador.cc $(OPCIONS)
 program.o: program.cc Procesador.hh Proceso.hh Prioridad.hh Cluster.hh Area_espera.hh
-	g++ -c program.cc $(OPCIONS) -I $(INCLUSIONS)
+	g++ -c program.cc $(OPCIONS) 
 
 
 clean:

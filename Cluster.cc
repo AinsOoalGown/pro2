@@ -10,8 +10,8 @@ Cluster::Cluster() {
 }
 
 bool Cluster::recibir_job(const Proceso& p) {   
-    int mem = p.consultar_MEM();
-    int id = p.consultar_ID();
+    int mem = p.consultar_MEM();    
+    int id = p.consultar_ID();      
     map<string, Procesador>::iterator it = mprc.begin();
     int tight = it->second.hueco(mem);
     int free_mem = it->second.MEM_libre();
@@ -53,7 +53,7 @@ bool Cluster::recibir_job(const Proceso& p) {
     }
     if (tight == -1) return false;
     else {
-        it2->second.add_job(p);
+        it2->second.add_job(p);     //vuelve a buscar en mapa de huecos...
         return true;
     }
 }
@@ -91,6 +91,12 @@ void Cluster::compactar() {
     }
 }
 
+void Cluster::compactar_prc(const string& id) {
+    map<string,Procesador>::iterator it = mprc.find(id);
+    if (it == mprc.end()) cout << "error: no existe procesador" << endl;
+    else it->second.compactar_mem();
+}
+
 map<string, Procesador> Cluster::bundle() const {
     return mprc;
 }
@@ -110,7 +116,7 @@ void Cluster::añadir_cluster(Cluster& c, const string& id) {
     }
 }
 
-void Cluster::update_tree(int alt, int izq, const BinTree<string>& a) {
+void Cluster::update_tree(int alt, int izq, const BinTree<string>& a) {     //MAL
     BinTree<string> l, r;
     if (a.empty()) return;
     else {
@@ -148,7 +154,7 @@ bool Cluster::modif_tree(const string& id, BinTree<string>& a, Cluster& c) {
     }
 }
 
-
+    //MAL
 void Cluster::leer_arbol(BinTree<string>& a, map <string, Procesador>& mpr, int alt, int izq) {       //añadir nuevos parametros 
     BinTree<string> l, r;
     string s;

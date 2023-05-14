@@ -120,6 +120,8 @@ public:
       \coste *No implementada*  
   */
     void compactar();
+
+    void compactar_prc(const string& id);
     
     //Consultoras
 
