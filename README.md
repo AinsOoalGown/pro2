@@ -12,3 +12,5 @@ Instrucciones:
 -Compactar memoria procesador SI
 
 Costes incluidos
+
+Jutge veredict 3/4
