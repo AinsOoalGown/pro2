@@ -71,17 +71,9 @@ public:
         en caso contrario se vuelve a enviar al área de espera
         \coste *No implementado*
     */
-    void enviar_job_a_cluster(); //envia un proceso pendiente al cluster
+    void enviar_job_a_cluster(int n, Cluster& c); //envia un proceso pendiente al cluster
 
     //Consultoras
-
-    /** @brief Consultora del estado global de los procesos
-
-       \pre El parámetro implícito está inicializado
-       \post El resultado indica si aun quedan procesos pendientes
-       \coste *No implementado*
-  */
-    bool pendiente_global() const; //devuelve true si aun quedan procesos pendientes
     
     //Lectura y escritura
 

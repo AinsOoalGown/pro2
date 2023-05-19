@@ -9,6 +9,35 @@ Cluster::Cluster() {
 
 }
 
+bool Cluster::recibir_job(const Proceso& p) {   
+    map<string, Procesador>::iterator it = mprc.end();
+    bfs(it, Tprc, p.consultar_MEM(), p.consultar_ID());
+    if (it == mprc.end()) return false;
+    it->second.add_job(p);
+    return true;
+}
+
+void Cluster::bfs(map<string, Procesador>::iterator& it,const BinTree<string>& tree, int memo, int id) {
+    queue<BinTree<string> > q;
+    q.push(tree);
+    int hollow = -1;
+    while (not q.empty()) {
+        BinTree<string> plant (q.front());
+        map <string, Procesador>::iterator itm = mprc.find(plant.value());
+        int hueco;
+        if (not itm->second.existe_job(id) and itm->second.hueco(memo, hueco)) {
+            if (it == mprc.end() or hueco < hollow) {
+                it = itm;
+                hollow = hueco;
+            }
+            else if (hueco == hollow and itm->second.MEM_libre() > it->second.MEM_libre()) it = itm;           
+        }
+        if (not plant.left().empty()) q.push(plant.left());
+        if (not plant.right().empty()) q.push(plant.right());
+        q.pop();
+    } 
+}
+
 void Cluster::add_job_prc(const string& idprc, Proceso& p) {
     map<string, Procesador>::iterator it = mprc.find(idprc);
     if (it == mprc.end()) cout << "error: no existe procesador" << endl;
@@ -34,8 +63,18 @@ void Cluster::avanzar_tiempo_prc(int t) {
     }
 }
 
-void Cluster::compactar() { //no se usa
-    mprc["proc12"].avanzar_tiempo(7);
+void Cluster::compactar() { 
+    map<string,Procesador>::iterator it = mprc.begin();
+    while (it != mprc.end()) {
+        it->second.compactar_mem();
+        ++it;
+    }
+}
+
+void Cluster::compactar_prc(const string& id) {
+    map<string,Procesador>::iterator it = mprc.find(id);
+    if (it == mprc.end()) cout << "error: no existe procesador" << endl;
+    else it->second.compactar_mem();
 }
 
 map<string, Procesador> Cluster::bundle() const {
@@ -60,7 +99,7 @@ BinTree<string> Cluster::seed() const {
 }
 
 bool Cluster::modif_tree(const string& id, BinTree<string>& a, Cluster& c) {
-    if (a.empty()) return false;    
+    if (a.empty()) return false; 
     BinTree<string> l = a.left();
     BinTree<string> r = a.right();
     if (a.value() == id) {
@@ -81,18 +120,18 @@ bool Cluster::modif_tree(const string& id, BinTree<string>& a, Cluster& c) {
     }
 }
 
-
-void Cluster::leer_arbol(BinTree<string>& a, map <string, Procesador>& mpr) {
+    //MAL
+void Cluster::leer_arbol(BinTree<string>& a, map <string, Procesador>& mpr) {       //añadir nuevos parametros 
     BinTree<string> l, r;
     string s;
     cin >> s;
     if (s != "*") {
         int m;
         cin >> m;
-        Procesador prc(s, m);
+        Procesador prc(s, m);           //añadir nuevos valores para los nuevos atributos
         mpr.insert(make_pair(s, prc));
         leer_arbol(l, mpr);
-        leer_arbol(r, mpr);
+        leer_arbol(r, mpr);  
         a = BinTree<string>(s, l, r);
     }
     else a = BinTree<string>();

@@ -37,12 +37,12 @@ void Area_espera::eliminar_prior(const string& id_prior) {
     
 }
 
-void Area_espera::enviar_job_a_cluster() {  //no se usa
-    mprior["proc12"].escribir_job();
-}
-
-bool Area_espera::pendiente_global() const {  //no se usa
-    return false;
+void Area_espera::enviar_job_a_cluster(int n, Cluster& c) {  
+    map <string, Prioridad>::iterator it = mprior.begin();
+    while (n > 0 and it != mprior.end()) {
+        it->second.enviar_proceso(n, c);
+        ++it;   
+    }
 }
 
 void Area_espera::leer() {

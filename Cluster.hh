@@ -9,8 +9,10 @@
 #include "Proceso.hh"
 #ifndef NO_DIAGRAM
 #include <iostream>
+#include <queue>
 #include <string>
 #include "BinTree.hh"
+#include <list>
 #include <utility>
 #include <map>
 #endif
@@ -46,6 +48,8 @@ private:
   */
     static void escribir_arbol(const BinTree<string>& a);
 
+    void bfs (map<string, Procesador>::iterator& it,const BinTree<string>& tree, int memo, int id);
+
     /** @brief A
 
       \pre A
@@ -74,6 +78,8 @@ public:
     Cluster();
 
     //Modificadoras
+
+  bool recibir_job(const Proceso& p);
 
     /** @brief Añade un proceso en un procesador
      
@@ -115,16 +121,10 @@ public:
       \coste *No implementada*  
   */
     void compactar();
+
+    void compactar_prc(const string& id);
     
     //Consultoras
-
-    /** @brief Consultora de la existencia de un procesador auxiliar apartir de otro procesador
-
-      \pre El p.i. está inicializado
-      \post El resultado indica si en el procesador con ID = id del p.i. existe un procesador auxiliar
-      \coste *No implementado*
-  */
-      bool existe_aux(const string& id) const;
 
     //Lectura y escritura
 

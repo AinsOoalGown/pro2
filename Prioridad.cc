@@ -5,17 +5,34 @@
 #include "Prioridad.hh"
 
 Prioridad::Prioridad() {
-    proc_env = proc_rechazados = 0;
+    env.first = env.second = 0;
 }
 
 void Prioridad::add_job(const Proceso& p) {
-    antique.insert(antique.end() ,p.consultar_ID());
+    antique.insert(antique.end(), p);
     mjob.insert(make_pair(p.consultar_ID(),p));
 }
 
-Proceso Prioridad::consultar_job_mas_antiguo() const { //posible inutilidad
-    Proceso p;
-    return p;
+void Prioridad::enviar_proceso(int& n, Cluster &c) {        //funciona
+    if (not antique.empty()) {
+        list<Proceso>::iterator it = antique.begin();
+        int size = antique.size();
+        int i = 0;
+        while (n > 0 and i < size) {
+            if (c.recibir_job(*it)) {
+                ++env.first;
+                --n;
+                mjob.erase((*it).consultar_ID());
+                it = antique.erase(it);
+            }
+            else {
+                antique.insert(antique.end(), (*it));
+                it = antique.erase(it);
+                ++env.second;   
+            }
+            ++i;
+        }
+    }
 }
 
 bool Prioridad::existe_job(int id) const {
@@ -28,14 +45,14 @@ bool Prioridad::en_espera() const {
 }
 
 void Prioridad::escribir_job() const {
-    list<int>::const_iterator it = antique.begin();
+    list<Proceso>::const_iterator it = antique.begin();
     while (it != antique.end()) { 
-        mjob.at((*it)).escribir();
+        (*it).escribir();
         ++it;
     }
 }
 
 
 void Prioridad::escribir_env_rech() const {
-    cout << proc_env << ' ' << proc_rechazados << endl;
+    cout << env.first << ' ' << env.second << endl;
 }

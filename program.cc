@@ -85,14 +85,8 @@ int main() {
         else if (comando == "epc" or comando == "enviar_procesos_cluster") {        //8
             int n;
             cin >> n;
-            bool salir = false;
-            while (n >= 0 and not salir) {
-                if (ae.pendiente_global()) {
-                    ae.enviar_job_a_cluster();
-                    --n;
-                }
-                else salir = true;
-            }
+            cout << '#' << comando << ' ' << n << endl;
+            ae.enviar_job_a_cluster(n, c);   
         }
 
         else if (comando == "at" or comando == "avanzar_tiempo") {     //9
@@ -132,11 +126,16 @@ int main() {
         }
         else if (comando == "cmp" or comando == "compactar_memoria_procesador") {    //15
             string id;
-            cin >> id;          //MAL!! NO USAR CONSULTAR PARA MODIFICAR
-            cout << "error:" << endl;
+            cin >> id; 
+            cout << '#' << comando << ' ' << id << endl;
+            c.compactar_prc(id);
+                  
         }
     
-        else if (comando == "cmc" or comando == "compactar_memoria_cluster") c.compactar();   //16
+        else if (comando == "cmc" or comando == "compactar_memoria_cluster") {      //16
+            cout << '#' << comando << endl;
+            c.compactar();   
+        }
         cin >> comando;
     }
 }

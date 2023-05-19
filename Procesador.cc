@@ -9,8 +9,9 @@ Procesador::Procesador() {
 }
 
 Procesador::Procesador(const string& s, int m) {
-    id_mem.first = s;
+    id = s;
     id_mem.second = m;
+    id_mem.first = 0;
     mmem[id_mem.second].insert(0);
 }
 
@@ -22,7 +23,10 @@ void Procesador::eliminar_job(int id, map <int,Proceso>::iterator& it) {
             cout << "error: no existe proceso" << endl;
             borrar = false;
         }
-        else it = mpos.find(it1->second);
+        else {
+            it = mpos.find(it1->second);
+            id_mem.first -= it->second.consultar_MEM();
+        }
     }
     if (borrar) {
         mjob.erase(it->second.consultar_ID());
@@ -87,11 +91,23 @@ void Procesador::avanzar_tiempo(int t) {
     }   
 }
 
+int Procesador::MEM_libre() const {
+    return id_mem.second - id_mem.first;
+}
+
+bool Procesador::hueco(int mem, int& hueco) {
+    map<int,set<int> >::const_iterator it = mmem.lower_bound(mem);
+    if (it == mmem.end()) return false;
+    hueco = it->first;
+    return true;
+}
+
 void Procesador::add_job(const Proceso& p) {
     int memo = p.consultar_MEM();
     map <int,set<int>>::iterator it1 = mmem.lower_bound(memo); //hueco igual o mayor a la memoria del proceso
     if (it1 == mmem.end()) cout << "error: no cabe proceso" << endl; 
     else {
+        id_mem.first += memo;
         set<int>::const_iterator it2 = it1->second.begin(); //indice más pequeño con hueco más ajustado 
         int hueco = it1->first - memo; //hueco = hueco anterior - memoria del proceso p.e: h.an. = 4, m = 2 -> h.ac. = 2
         if (hueco > 0) mmem[hueco].insert(*it2 + memo);     
@@ -105,12 +121,29 @@ void Procesador::add_job(const Proceso& p) {
 }
 
 
-void Procesador::compactar_mem() {  //no se usa
-    cout << mjob[78] << endl;
+void Procesador::compactar_mem() {  
+    if (not mjob.empty()) {
+        mmem.clear();
+        map <int, Proceso>::iterator it = mpos.begin();
+        int length = 0;
+        while (it != mpos.end()) {
+            if (it->first != length) {
+                mpos.insert(it, make_pair(length, it->second));  //insert detras del elemento a eliminar
+                mjob[it->second.consultar_ID()] = length;        //actualizamos mjob map
+                length += it->second.consultar_MEM();   //siguiente indice al que se tiene que mover
+                it = mpos.erase(it);        //avanzas al siguiente 
+            }
+            else {
+                length += it->second.consultar_MEM();
+                ++it;
+            }
+        }
+        mmem[id_mem.second - length].insert(length);
+    }
 }
 
 string Procesador::consultar_ID() const {
-    return id_mem.first;
+    return id;
 }
 
 bool Procesador::existe_job(int id) const {
@@ -119,10 +152,6 @@ bool Procesador::existe_job(int id) const {
 
 bool Procesador::en_curso() const {
     return not mjob.empty();
-}
-
-void Procesador::leer() {   //no se usa
-    cin >> id_mem.first;
 }
 
 void Procesador::escribir() const {

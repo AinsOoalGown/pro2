@@ -7,7 +7,6 @@
 #define PROCESADOR_HH
 
 #include "Proceso.hh"
-#include "Prioridad.hh"
 #ifndef NO_DIAGRAM
 #include <utility>
 #include <set>
@@ -21,12 +20,14 @@ using namespace std;
 class Procesador {
 
 private:
-    /** @brief Pair con el id y memoria maxima del procesador
+
+    string id;
+    /** @brief Pair con memoria libre y memoria maxima del procesador
      
-      first = string con el id del procesador, 
+      first = entero con memoria libre, 
       second = entero con capacidad/memoria máxima del procesador 
     */
-    pair <string, int> id_mem; //id + mem_max
+    pair <int, int> id_mem; //mem_libre + mem_max
 
     /** @brief Mapa de indices de cada proceso ordenado crecientemente por su id */
     map <int, int> mjob;
@@ -101,7 +102,11 @@ public:
     */
     void compactar_mem();
 
+    bool hueco(int mem, int& hueco);
+
     //Consultoras
+
+    int MEM_libre() const;
 
     /** @brief Consultora de el ID del procesador
      
@@ -129,15 +134,6 @@ public:
     bool en_curso() const;
 
     //Lectura y escritura
-
-    /** @brief Operación de lectura
-
-      \pre Hay preparados en el canal standard de entrada los datos de un procesador
-      \post El parámetro ímplicito pasa a tener los atributos leídos 
-      del canal standard de entrada
-      \coste Constante
-    */
-    void leer(); 
 
     /** @brief Operación de escritura
 
