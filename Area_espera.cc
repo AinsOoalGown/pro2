@@ -65,7 +65,7 @@ void Area_espera::escribir() const {
 }
 
 void Area_espera::escribir_prior(const string& id_prior, map <string, Prioridad>::const_iterator& it) const {
-    if (id_prior != "*") {
+    if (id_prior != "*") {      //la llamada viene del comando imprimir prioridad(hay que buscar it con id_prior)
         it = mprior.find(id_prior);
         if (it == mprior.end()) cout << "error: no existe prioridad" << endl;
         else {
@@ -73,7 +73,7 @@ void Area_espera::escribir_prior(const string& id_prior, map <string, Prioridad>
             it->second.escribir_env_rech();
         }
     }
-    else {
+    else {      //la llamada viene del comando escribir area de espera (el iterador ya esta inicializado)
         if (it->second.en_espera()) it->second.escribir_job(); 
         it->second.escribir_env_rech();
     }

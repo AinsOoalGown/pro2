@@ -22,4 +22,4 @@ clean:
 	rm *.tar
 
 practica.tar:
-	tar -cvf practica.tar *.cc *.hh Makefile
+	tar -cvf practica.tar *.cc *.hh *.zip Makefile

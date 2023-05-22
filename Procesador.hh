@@ -20,26 +20,23 @@ using namespace std;
 class Procesador {
 
 private:
-
+    /** @brief String con el identificador del procesador */
     string id;
+
     /** @brief Pair con memoria libre y memoria maxima del procesador
      
       first = entero con memoria libre, 
       second = entero con capacidad/memoria máxima del procesador 
     */
-    pair <int, int> id_mem; //mem_libre + mem_max
+    pair <int, int> free_max; //mem_ocupada + mem_max
 
     /** @brief Mapa de indices de cada proceso ordenado crecientemente por su id */
     map <int, int> mjob;
 
-    /** @brief Mapa del los huecos de memoria con la posicion para cada tamaño
-      
-     */
+    /** @brief Mapa del los huecos de memoria con la posicion para cada tamaño */
     map <int, set<int> > mmem; //key = hueco de espacio, value = indices de los huecos libres de memoria
 
-     /** @brief Mapa del los proceso del procesador ordenado por lo indices de menor a mayor
-      
-     */
+     /** @brief Mapa del los procesos del procesador ordenado por lo indices de menor a mayor */
     map <int, Proceso> mpos; //key = ind del proceso, value = proceso
     
 public:
@@ -58,7 +55,9 @@ public:
     /** @brief Creadora con valores concretos.
 
       \pre m > 0
-      \post El resultado es un proceso con id "s" y memoria máxima "m"
+      \post El resultado es un proceso con id "s", memoria máxima "m",
+      memoria coupada 0, map de indices y id vacios y map de huecos 
+      con un hueco del tamaño de la mem_max con indice 0 en el set
       \coste Constante
     */
     Procesador(const string& s, int m);
@@ -79,7 +78,7 @@ public:
         \pre El p.i. (P) está inicializado, la memoria de p es menor 
         o igual a la memoria actual de P
         \post El p.i. contiene sus procesos originales más p 
-        \coste Logarítmico
+        \coste Logarítmico ,sobre 2 más logarítmicos (en caso de caber)
     */
     void add_job(const Proceso& p);
 
@@ -97,15 +96,28 @@ public:
      
         \pre <em>cierto</em>
         \post El p.i. contiene los procesos originales desplazados 
-        al inicio de la memoria
-        \coste *No implementado*
+        al inicio de la memoria por orden de indice (uno detras de otro)
+        \coste Lineal sobre el número de procesos más logarítmico (busqueda en map)
     */
     void compactar_mem();
 
+    /** @brief Determina si el proceso cabe en el procesador 
+     
+        \pre <em>cierto</em>
+        \post Retorna true si mem cabe en el procesador y actualiza a hueco
+        a la llave del mapa de huecos encontrado, retorna false en caso contrario
+        \coste Logarítmico 
+    */
     bool hueco(int mem, int& hueco);
 
     //Consultoras
 
+    /** @brief Consulta la memoria libre del procesador 
+     
+        \pre <em>cierto</em>
+        \post Devuelve la resta de la memoria maxima menos la memoria ocupada
+        \coste Constante
+    */
     int MEM_libre() const;
 
     /** @brief Consultora de el ID del procesador

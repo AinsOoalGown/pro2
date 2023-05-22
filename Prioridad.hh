@@ -23,13 +23,13 @@ private:
   /** @brief Lista de procesos
 
     Ordenada por orden de antigüedad de entrada de los procesos*/
-  list<Proceso> antique;
+  list<Proceso> ant;
 
   /** @brief Numero de procesos enviados (aceptados) y (rechazados) al cluster */
   pair <int, int> env;
 
   /** @brief Mapa de procesos ordenado crecientemente por su id */
-  map<int, Proceso> mjob; // Vector de procesos pendientes (puede estar vacio)
+  map<int, Proceso> mjob;
 
 public:
   // Constructoras
@@ -39,7 +39,7 @@ public:
     Se ejecuta automáticamente al declarar una prioridad.
     \pre <em>cierto</em>
     \post El resultado es una prioridad con un conjunto de procesos vacío
-    y id_prior -1;
+    y pair de enviados a 0
     \coste Constante
 */
   Prioridad();
@@ -56,13 +56,15 @@ public:
 
   // Consultoras
 
-  /** @brief Consultora del proceso más antiguo
+  /** @brief Intenta enviar una cantidad de procesos de el área de espera al cluster
 
-     \pre El parámetro implícito contiene almenos un proceso
-     \post El resultado es el proceso del p.i. con mayor tiempo en el area de espera
-     \coste *No implementado*
+     \pre n > 0
+     \post El p.i. ha intentado enviar n procesos al cluster c, los procesos
+     aceptados son borrados de la prioridad, y los rechazados vuelven a la lista
+     de la prioridad como nuevos (reinicio de antigüedad)
+     \coste Lineal sobre lineal (consultar recibir_job() de la clase cluster)
 */
-  void enviar_proceso(int &n, Cluster &c);
+  void enviar_proceso(int& n, Cluster& c);
 
   /** @brief Consultora de la existencia de un proceso con una prioridad
 

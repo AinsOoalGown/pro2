@@ -64,14 +64,15 @@ public:
     */
     void eliminar_prior(const string& id_prior);
 
-    /** @brief Envia un proceso del área de espera al clúster 
+    /** @brief Intenta enviar una cantidad de procesos del área de espera al cluster 
      
-        \pre Existe almenos un proceso pendiente en el p.i.
-        \post Envia un proceso pendiente al cluster, si cabe en el cluster se designa un procesador según un orden,
-        en caso contrario se vuelve a enviar al área de espera
-        \coste *No implementado*
+        \pre n > 0
+        \post El p.i. ha intentado enviar n procesos al cluster c, los aceptados
+        son elimindas del p.i., los rechazados vuelven al p.i. como nuevos
+        \coste Lineal sobre lineal (consultar coste de la función en_proceso()
+        de la clase Prioridad)
     */
-    void enviar_job_a_cluster(int n, Cluster& c); //envia un proceso pendiente al cluster
+    void enviar_job_a_cluster(int n, Cluster& c);
 
     //Consultoras
     

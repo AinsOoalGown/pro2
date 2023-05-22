@@ -13,7 +13,7 @@
 using namespace std;
 
 /** @class Proceso
-    @brief Representa un proceso en ejecución o en espera con id, memoria ocupada, tiempo de ejecución y prioridad del propio proceso
+    @brief Representa un proceso en ejecución o en espera con id, memoria que ocupa y tiempo de ejecución
 
 */
 class Proceso {
@@ -25,10 +25,7 @@ private:
     /** @brief Tiempo de ejecución restante de el proceso */
     int t_ejec;
 
-    /** @brief Pair de enteros con el índice de memoria y memoria ocupada del proceso
-     
-      first = índice de la posición que ocupa en el memoria, second = memoria que ocupa
-    */
+    /** @brief Memoria del proceso */
     int mem;
 
 public:
@@ -47,8 +44,8 @@ public:
 
     /** @brief Resta el tiempo de ejecución del proceso
      
-      \pre <em> tiempo = T, T > 0 </em>
-      \post El resultado es el p.i. con tiempo = T - t , tiempo >= 0
+      \pre <em> tiempo = t_ejec, t_ejec > 0 </em>
+      \post El resultado es el p.i. con tiempo = t_ejec - t , tiempo >= 0
       \coste Constante
   */
     void restar_tiempo(int t);
